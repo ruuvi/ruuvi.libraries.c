@@ -1,5 +1,5 @@
 /**
- * @file peak2peak.h
+ * @file ruuvi_library_peak2peak.h
  * @author Otso Jousimaa
  * @date 2019-01-24
  * @brief Function for finding peak to peak amplitude of a signal sample.
@@ -9,8 +9,8 @@
  * Calculate the difference between lowest and highest value in given sample set.
  */
 
-#ifndef PEAK2PEAK_H
-#define PEAK2PEAK_H
+#ifndef RUUVI_LIBRARY_PEAK2PEAK_H
+#define RUUVI_LIBRARY_PEAK2PEAK_H
 #include <math.h>
 #include <stdlib.h>
 /// @cond 0

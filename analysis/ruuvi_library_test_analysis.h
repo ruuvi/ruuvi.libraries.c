@@ -56,5 +56,73 @@ bool ruuvi_library_test_peak2peak_overflow(void);
  */
 bool ruuvi_library_test_peak2peak_input_check(void);
 
+#define RLT_RMS_OK_VECTOR       {0.02f, 0.05f, -0.01f, -0.10f, 0.0f}
+#define RLT_RMS_OK_EXPECT       (0.12f)
+#define RLT_RMS_OK_DECIMALS     (2)
+#define RLT_RMS_NAN_VECTOR      {0.02f, 0.05f, NAN, -0.10f, 0.0f}
+#define RLT_RMS_OVERFLOW_VECTOR {0.02f, 0.05f, FLT_MAX, 0-FLT_MAX, 0.0f}
+
+/**
+ * @brief Tests if rms value is calculated correctly on valid data. 
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_rms_ok(void);
+
+/**
+ * @brief Tests ifrms is reported as NAN if series contains NAN.
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_rms_nan(void);
+
+/**
+ * @brief Tests ifrms value is reported as NAN if float overflows.
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_rms_overflow(void);
+
+/**
+ * @brief Tests if rms returns NAN on invalid input arguments
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_rms_input_check(void);
+
+#define RLT_VARIANCE_OK_VECTOR       {0.02f, 0.05f, -0.01f, -0.10f, 0.0f}
+#define RLT_VARIANCE_OK_EXPECT       (0.12f)
+#define RLT_VARIANCE_OK_DECIMALS     (2)
+#define RLT_VARIANCE_NAN_VECTOR      {0.02f, 0.05f, NAN, -0.10f, 0.0f}
+#define RLT_VARIANCE_OVERFLOW_VECTOR {0.02f, 0.05f, FLT_MAX, 0-FLT_MAX, 0.0f}
+
+/**
+ * @brief Tests if variance value is calculated correctly on valid data. 
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_variance_ok(void);
+
+/**
+ * @brief Tests if variance is reported as NAN if series contains NAN.
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_variance_nan(void);
+
+/**
+ * @brief Tests if variance value is reported as NAN if float overflows.
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_variance_overflow(void);
+
+/**
+ * @brief Tests if variance returns NAN on invalid input arguments
+ *
+ * @return True if yes, false if not. True is "pass" value.
+ */
+bool ruuvi_library_test_variance_input_check(void);
+
 /** @} */ // End of group Analysis tests
 #endif

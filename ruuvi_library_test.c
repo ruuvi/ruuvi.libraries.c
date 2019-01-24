@@ -22,6 +22,30 @@ bool ruuvi_library_test_all_run(const ruuvi_library_test_print_fp printfp)
   total_tests++;
   passed += ruuvi_library_test_peak2peak_input_check();
 
+  total_tests++;
+  passed += ruuvi_library_test_rms_ok();
+
+  total_tests++;
+  passed += ruuvi_library_test_rms_nan();
+
+  total_tests++;
+  passed += ruuvi_library_test_rms_overflow();
+
+  total_tests++;
+  passed += ruuvi_library_test_rms_input_check();
+
+  total_tests++;
+  passed += ruuvi_library_test_variance_ok();
+
+  total_tests++;
+  passed += ruuvi_library_test_variance_nan();
+
+  total_tests++;
+  passed += ruuvi_library_test_variance_overflow();
+
+  total_tests++;
+  passed += ruuvi_library_test_variance_input_check();
+
   char msg[128] = {0};
   snprintf(msg, sizeof(msg), "Library tests ran: %d, passed: %d.\r\n", total_tests, passed);
   printfp(msg);
