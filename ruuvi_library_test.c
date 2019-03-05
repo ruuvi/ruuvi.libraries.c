@@ -47,8 +47,10 @@ bool ruuvi_library_test_all_run(const ruuvi_library_test_print_fp printfp)
   passed += ruuvi_library_test_variance_input_check();
 
   char msg[128] = {0};
-  snprintf(msg, sizeof(msg), "Library tests ran: %d, passed: %d.\r\n", total_tests, passed);
+  snprintf(msg, sizeof(msg), "Library tests ran: %lu, passed: %lu.\r\n", total_tests, passed);
   printfp(msg);
+
+  return (total_tests == passed);
 }
 
 bool ruuvi_library_expect_close(const float expect, const int8_t precision, const float check)
@@ -56,6 +58,6 @@ bool ruuvi_library_expect_close(const float expect, const int8_t precision, cons
   if(!isfinite(expect) || !isfinite(check)) { return false; }
   const float max_delta = pow(10, precision);
   float delta = expect - check;
-  if(delta < 0) delta = 0 - delta; // absolute value
+  if(delta < 0) { delta = 0 - delta; } // absolute value
   return max_delta > delta;
 }

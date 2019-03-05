@@ -5,9 +5,6 @@
 #include "ruuvi_library_test.h"
 #include <math.h>
 
-static size_t m_ruuvi_library_test_run;
-static size_t m_ruuvi_library_test_pass;
-
 bool ruuvi_library_test_peak2peak_ok(void)
 {
   float vector[] = RLT_P2P_OK_VECTOR;
