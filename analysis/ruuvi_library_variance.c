@@ -16,6 +16,8 @@ float ruuvi_library_variance(const float* const data, const size_t data_length)
     if(!isfinite(data[ii])) { return NAN; }
     mean += data[ii];
   }
+  mean /= data_length;
+
   // Calculate squared differences
   for(size_t ii = 0; ii < data_length; ii++)
   {
