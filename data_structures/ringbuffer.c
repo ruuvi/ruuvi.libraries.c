@@ -12,13 +12,11 @@ void ringbuffer_init(ringbuffer_t *buffer, size_t  element_max, size_t element_s
     buffer->element_size = element_size;
     buffer->start = 0;
     buffer->count = 0;
-    // buffer->element = malloc(element_size * element_max);
     buffer->element = storage;
 }
 
 void ringbuffer_uninit(ringbuffer_t *buffer)
 {
-  // free(buffer->element);
   buffer->element = NULL;
 }
  
