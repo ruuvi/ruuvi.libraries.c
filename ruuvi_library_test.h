@@ -52,5 +52,7 @@ bool ruuvi_library_test_all_run(const ruuvi_library_test_print_fp printfp);
  */
 bool ruuvi_library_expect_close(const float expect, const int8_t precision, const float check);
 
+
+
 /** @} */ // End of group Library tests
 #endif
