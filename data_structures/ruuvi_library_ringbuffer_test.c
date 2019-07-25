@@ -6,7 +6,7 @@
 #include <string.h>
 
 /** Dummy function to lock/unlock buffer */
-bool ruuvi_library_test_ringbuffer_lock_dummy(void* const flag, bool lock)
+bool ruuvi_library_test_ringbuffer_lock_dummy(volatile void* const flag, bool lock)
 {
   bool* p_bool = (bool*) flag;
   if(*p_bool == lock) return false;
@@ -44,8 +44,7 @@ bool ruuvi_library_test_ringbuffer_put_get()
   status = RUUVI_LIBRARY_SUCCESS;
   do{
     const uint32_t* p_data;
-    const uint32_t** p_p_data = &p_data;
-    status = ruuvi_library_ringbuffer_dequeue(&ringbuf, p_p_data);
+    status = ruuvi_library_ringbuffer_dequeue(&ringbuf, &p_data);
     if((RUUVI_LIBRARY_SUCCESS == status) && (*p_data != test_data[index])) { return false; }
     index++;
   }while(RUUVI_LIBRARY_SUCCESS == status);

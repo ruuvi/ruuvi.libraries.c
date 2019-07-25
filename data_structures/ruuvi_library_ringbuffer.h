@@ -42,7 +42,7 @@
  * @param[in] set true to set flag, false to clear flag.
  * @return    true if operation was successful
  */
-typedef bool(*ruuvi_library_atomic_flag)(void* const flag, const bool set);
+typedef bool(*ruuvi_library_atomic_flag)(volatile void* const flag, const bool set);
 
 /* @brief Struct definition for ringbuffer. 
  * 
@@ -73,8 +73,8 @@ typedef struct {
    *         returns true if buffer is used in single-thread environment without interrupts. 
    */
   const ruuvi_library_atomic_flag lock;
-  void* const writelock;     //!< Memory address for flag locking write function
-  void* const readlock;      //!< Memory address for flag locking read function.
+  volatile void* const writelock;     //!< Memory address for flag locking write function
+  volatile void* const readlock;      //!< Memory address for flag locking read function.
 }ruuvi_library_ringbuffer_t;
 
 /**

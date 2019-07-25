@@ -22,7 +22,7 @@
  */
 
 /** Dummy function to lock/unlock buffer */
-bool ruuvi_library_test_ringbuffer_lock_dummy(void* const flag, bool lock);
+bool ruuvi_library_test_ringbuffer_lock_dummy(volatile void* const flag, bool lock);
 
 /**
  * Test that data can be queued and dequeued to/from buffer
