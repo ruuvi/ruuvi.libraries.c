@@ -15,8 +15,7 @@
  * @return    RUUVI_LIBRARY_ERROR_CONCURRENCY if could not obtain lock
  * @return    RUUVI_LIBRARY_ERROR_FATAL if lock could not be released
  * @return    RUUVI_LIBRARY_ERROR_NULL  if data or buffer are NULL
- * @return    RUUVI_LIBRARY_ERROR_
- * @warning   This function has no input checking. 
+ * @return    RUUVI_LIBRARY_ERROR_DATA_LENGTH if data is bigger than buffer block size.
  */
 ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t* const buffer, 
                                                       const void* const data,
