@@ -23,8 +23,8 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t
 {
   if(!buffer->lock(buffer->writelock, true)) { return RUUVI_LIBRARY_ERROR_CONCURRENCY; }
   if(ruuvi_library_ringbuffer_full(buffer))  { return RUUVI_LIBRARY_ERROR_NO_MEM; }
-  if(NULL == buffer || NULL == data))        { return RUUVI_LIBRARY_ERROR_NULL; }
-  if(buffer->block_size < data_length))      { return RUUVI_LIBRARY_ERROR_DATA_LENGTH; }
+  if(NULL == buffer || NULL == data)        { return RUUVI_LIBRARY_ERROR_NULL; }
+  if(buffer->block_size < data_length)      { return RUUVI_LIBRARY_ERROR_DATA_LENGTH; }
 
   memcpy((buffer->storage) + (buffer->head * buffer->block_size), 
          data, data_length);
