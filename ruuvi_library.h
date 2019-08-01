@@ -9,9 +9,9 @@
  * @copyright Copyright 2019 Ruuvi Innovations.
  *   This project is released under the BSD-3-Clause License.
  *
- * Calculate the difference between lowest and highest value in given sample set.
  */
 #include <stdint.h>
+
 
 #define RUUVI_LIBRARY_SUCCESS 0                 //!< Success
 #define RUUVI_LIBRARY_ERROR_NO_MEM      (1<<0)  //!< Not enough memory for operation
@@ -22,7 +22,11 @@
 #define RUUVI_LIBRARY_ERROR_DATA_LENGTH (1<<5)  //!< Data length is invalid for any reason
 #define RUUVI_LIBRARY_ERROR_FATAL       (1<<31) //!< Unrecoverable error, restart program
 
+#define RUUVI_LIBRARY_I32_INVALID       INT32_MIN
+
 typedef int32_t ruuvi_library_status_t;
+
+
 
 
 
