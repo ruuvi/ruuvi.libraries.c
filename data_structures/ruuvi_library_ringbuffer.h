@@ -16,6 +16,7 @@
 #ifndef  RUUVI_LIBRARY_RINGBUFFER_H
 #define  RUUVI_LIBRARY_RINGBUFFER_H
 
+#include "ruuvi_library.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
