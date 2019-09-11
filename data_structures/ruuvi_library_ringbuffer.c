@@ -40,8 +40,8 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t
  * This function operates on the tail of the buffer, and rejects operation if 
  * there is no more elements in the buffer. 
  * 
- * @param[in]  buffer Pointer to ringbuffer to store data into
- * @param[out] data Data to retrieve. Returns pointer to data in ringbuffer, a shallow copy.
+ * @param[in]  buffer Pointer to ringbuffer to load data from
+ * @param[out] data Pointer to a pointer in ringbuffer, a shallow copy.
  * @return     RUUVI_LIBRARY_SUCCESS if data was queued
  * @return     RUUVI_LIBRARY_ERROR_NO_MEM if the ringbuffer was full
  * @warning    This function has no input checking

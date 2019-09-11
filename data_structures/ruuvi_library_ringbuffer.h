@@ -2,7 +2,7 @@
  * @file ruuvi_library_ringbuffer.h
  * @author Otso Jousimaa
  * @date 2019-07-22
- * @brief Ringbuffer with emphasis on interrupt tolerace and speed
+ * @brief Ringbuffer with emphasis on interrupt tolerance and speed
  * @copyright Copyright 2019 Ruuvi Innovations.
  *   This project is released under the BSD-3-Clause License.
  *
