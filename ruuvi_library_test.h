@@ -17,7 +17,6 @@
  *  Functions to test analysis functions for correctness.
  *  @{
  */
-
 typedef void(*ruuvi_library_test_print_fp)(const char* const msg);
 
 /**
