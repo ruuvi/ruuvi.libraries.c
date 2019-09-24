@@ -38,7 +38,7 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_peek(ruuvi_library_ringbuffer_t*
                                                         const void *data, const size_t index)
 {
   if(NULL == buffer || NULL == data)         { return RUUVI_LIBRARY_ERROR_NULL; }
-  if((buffer->head - (buffer->tail + index)) > buffer->index_mask) { return RUUVI_LIBRARY_ERROR_NO_DATA; }
+  if(((buffer->tail + index) & buffer->index_mask) == buffer->head) { return RUUVI_LIBRARY_ERROR_NO_DATA; }
   if(!buffer->lock(buffer->readlock, true))  {return RUUVI_LIBRARY_ERROR_CONCURRENCY; }
 
   void** p_data = (void**)data;
