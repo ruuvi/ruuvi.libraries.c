@@ -1,22 +1,8 @@
 #include "ruuvi_library.h"
 #include "ruuvi_library_ringbuffer.h"
 #include <string.h>
-/**
- * @brief Queue data into ringbuffer
- *
- * This function operates on the head of the buffer, and rejects operation if 
- * there is no more room in the buffer. 
- * 
- * @param[in] buffer Pointer to ringbuffer to store data into
- * @param[in] data Data to store
- * @param[in] data_length length of data, at most @ref block_size. 
- * @return    RUUVI_LIBRARY_SUCCESS if data was queued
- * @return    RUUVI_LIBRARY_ERROR_NO_MEM if the ringbuffer was full
- * @return    RUUVI_LIBRARY_ERROR_CONCURRENCY if could not obtain lock
- * @return    RUUVI_LIBRARY_ERROR_FATAL if lock could not be released
- * @return    RUUVI_LIBRARY_ERROR_NULL  if data or buffer are NULL
- * @return    RUUVI_LIBRARY_ERROR_DATA_LENGTH if data is bigger than buffer block size.
- */
+
+
 ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t* const buffer, 
                                                       const void* const data,
                                                       const size_t data_length)
@@ -33,19 +19,6 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t
   return RUUVI_LIBRARY_SUCCESS;
 }
 
-
-/**
- * @brief Dequeue data from ringbuffer
- *
- * This function operates on the tail of the buffer, and rejects operation if 
- * there is no more elements in the buffer. 
- * 
- * @param[in]  buffer Pointer to ringbuffer to load data from
- * @param[out] data Pointer to a pointer in ringbuffer, a shallow copy.
- * @return     RUUVI_LIBRARY_SUCCESS if data was queued
- * @return     RUUVI_LIBRARY_ERROR_NO_MEM if the ringbuffer was full
- * @warning    Returns a shallow copy of data. 
- */
 ruuvi_library_status_t ruuvi_library_ringbuffer_dequeue(ruuvi_library_ringbuffer_t* const buffer, 
                                                         const void *data)
 {
@@ -61,17 +34,25 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_dequeue(ruuvi_library_ringbuffer
   return RUUVI_LIBRARY_SUCCESS;
 }
 
-/*
- * @return true if ringbuffer is full
- */
+ruuvi_library_status_t ruuvi_library_ringbuffer_peek(ruuvi_library_ringbuffer_t* const buffer, 
+                                                        const void *data, const size_t index)
+{
+  if(NULL == buffer || NULL == data)         { return RUUVI_LIBRARY_ERROR_NULL; }
+  if((buffer->head - (buffer->tail + index)) > buffer->index_mask) { return RUUVI_LIBRARY_ERROR_NO_DATA; }
+  if(!buffer->lock(buffer->readlock, true))  {return RUUVI_LIBRARY_ERROR_CONCURRENCY; }
+
+  void** p_data = (void**)data;
+  *p_data = buffer->storage + (((buffer->tail + index) & buffer->index_mask) * buffer->block_size);
+
+  if(!buffer->lock(buffer->readlock, false)) {return RUUVI_LIBRARY_ERROR_FATAL; }
+  return RUUVI_LIBRARY_SUCCESS;
+}
+
 bool ruuvi_library_ringbuffer_full(const ruuvi_library_ringbuffer_t* const buffer)
 {
   return ((buffer->head - buffer->tail) & buffer->index_mask) == buffer->index_mask;
 }
 
-/*
- * @return true if ringbuffer is empty
- */
 bool ruuvi_library_ringbuffer_empty(const ruuvi_library_ringbuffer_t* const buffer)
 {
   return buffer->head == buffer->tail;

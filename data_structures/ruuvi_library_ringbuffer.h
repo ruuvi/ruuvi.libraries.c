@@ -104,18 +104,37 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t
  * This function operates on the tail of the buffer, and rejects operation if 
  * there is no more elements in the buffer. Returns pointer to stored data,
  * does not copy it. The stored data can be overwritten by after function returns,
- * so take a deep copy of data if required. You can also implement a peek function to 
- * copy the data before dequeuing
+ * so take a deep copy of data if required. You can also use a peek function to 
+ * copy the data without dequeuing
  * 
- * @param[in,out] buffer Pointer to ringbuffer to store data into
+ * @param[in,out] buffer Pointer to ringbuffer to load data from
  * @param[out]    data Pointer to data, will be assigned at the start of the stored object
- * @return        RUUVI_LIBRARY_SUCCESS if data was queued
- * @return        RUUVI_LIBRARY_ERROR_NO_MEM if the ringbuffer was full
+ * @return        RUUVI_LIBRARY_SUCCESS if data was dequeued
+ * @return        RUUVI_LIBRARY_ERROR_NO_DATA if the ringbuffer was empty
  * @warning       This function has no input checking
  * @warning       Data returned by this function can be overwritten, take a deep copy if required. 
  */
 ruuvi_library_status_t ruuvi_library_ringbuffer_dequeue(ruuvi_library_ringbuffer_t* const buffer, 
                                                         const void *data);
+
+/**
+ * @brief Peek data in ringbuffer
+ *
+ * This function operates on the tail + offset of the buffer, and rejects operation if 
+ * there are no more elements in the buffer. Returns pointer to stored data,
+ * does not copy it. The stored data can be overwritten by after function returns,
+ * so take a deep copy of data if required. 
+ * 
+ * @param[in,out] buffer Pointer to ringbuffer to peek data from
+ * @param[out]    data Pointer to data, will be assigned at the start of the stored object
+ * @param[in]     index offset to read data, starting from tail.
+ * @return        RUUVI_LIBRARY_SUCCESS if data was queued
+ * @return        RUUVI_LIBRARY_ERROR_NO_data if the ringbuffer doesn't have element at the given index
+ * @warning       This function has no input checking
+ * @warning       Data returned by this function can be overwritten, take a deep copy if required. 
+ */
+ruuvi_library_status_t ruuvi_library_ringbuffer_peek(ruuvi_library_ringbuffer_t* const buffer, 
+                                                        const void *data, const size_t index);
 
 /*
  * return true if rinbuffer is full

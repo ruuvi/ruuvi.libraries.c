@@ -15,9 +15,10 @@ bool ruuvi_library_test_ringbuffer_lock_dummy(volatile void* const flag, bool lo
 }
 
 /**
- * Test that data can be queued and dequeued to/from buffer
+ * @brief Test that data can be queued, peeked and dequeued to/from buffer
  *
  * @return true if test passes
+ * @return false if test fails.
  */
 bool ruuvi_library_test_ringbuffer_put_get()
 {
@@ -48,19 +49,33 @@ bool ruuvi_library_test_ringbuffer_put_get()
   status |= ruuvi_library_ringbuffer_queue(&ringbuf, &(test_data[index-1]), sizeof(uint32_t));
   if(RUUVI_LIBRARY_SUCCESS != status) { return false; }
 
-  // Check that elements are in place
+  // Check that elements are in place - peek
+  index = 1;
+  size_t peek = 0;
+  status = RUUVI_LIBRARY_SUCCESS;
+  do{
+    // Data is offset by one in above de- and requeuing, increment peek index and
+    // check against incremented peek index
+    status = ruuvi_library_ringbuffer_peek(&ringbuf, &p_data, peek++);
+    if((RUUVI_LIBRARY_SUCCESS == status) && (*p_data != test_data[peek])) { return false; }
+  }while(RUUVI_LIBRARY_SUCCESS == status);
+
+  // Status should be NO_DATA
+  if(RUUVI_LIBRARY_ERROR_NO_DATA != status) { return false; }
+
+  // Check that elements are in place after peek, dequeue
   index = 1;
   status = RUUVI_LIBRARY_SUCCESS;
   do{
     
     status = ruuvi_library_ringbuffer_dequeue(&ringbuf, &p_data);
     if((RUUVI_LIBRARY_SUCCESS == status) && (*p_data != test_data[index])) { return false; }
-    // Increment here to avoid index not getting incremented due to lazy evaluation of above if
+    // Increment here to avoid index not getting incremented due to lazy evaluation of above if clause
     index++;
   }while(RUUVI_LIBRARY_SUCCESS == status);
   
-  // 15 is last success, 16 is failure and gets incremented.
-  return 17 == index; 
+  // 15 is last success, 16 is failure and gets incremented. Status should be NO_DATA
+  return (17 == index) && (RUUVI_LIBRARY_ERROR_NO_DATA == status); 
 }
 
 /**
