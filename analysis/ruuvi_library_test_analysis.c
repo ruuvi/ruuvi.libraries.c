@@ -45,7 +45,7 @@ bool ruuvi_library_test_rms_ok(void)
   float vector[] = RLT_RMS_OK_VECTOR;
   float rms = 0;
   rms = ruuvi_library_rms(vector, sizeof(vector ) / sizeof(float));
-  return ruuvi_library_expect_close(RLT_P2P_OK_EXPECT, RLT_P2P_OK_DECIMALS, rms);
+  return ruuvi_library_expect_close(RLT_RMS_OK_EXPECT, RLT_RMS_OK_DECIMALS, rms);
 }
 
 bool ruuvi_library_test_rms_nan(void)
@@ -80,7 +80,7 @@ bool ruuvi_library_test_variance_ok(void)
   float vector[] = RLT_VARIANCE_OK_VECTOR;
   float variance = 0;
   variance = ruuvi_library_variance(vector, sizeof(vector ) / sizeof(float));
-  return ruuvi_library_expect_close(RLT_P2P_OK_EXPECT, RLT_P2P_OK_DECIMALS, variance);
+  return ruuvi_library_expect_close(RLT_VARIANCE_OK_EXPECT, RLT_VARIANCE_OK_DECIMALS, variance);
 }
 
 bool ruuvi_library_test_variance_nan(void)
