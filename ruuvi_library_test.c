@@ -12,19 +12,35 @@
  * @param[in, out] total Total number of tests which have been run. Gets incremented.
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
-static void ruuvi_library_test_peak2peak(uint32_t* const total_tests, uint32_t* const passed)
+static void ruuvi_library_test_peak2peak(uint32_t* const total_tests, uint32_t* const passed, const ruuvi_library_test_print_fp printfp)
 {
-  (*total_tests)++;
-  (*passed) += ruuvi_library_test_peak2peak_ok();
+  bool pass = false;
 
+  printfp("'peak2peak':{\r\n");
+  printfp("'valid_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_peak2peak_nan();
+  pass = ruuvi_library_test_peak2peak_ok();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
+  printfp("'nan_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_peak2peak_overflow();
+  pass = ruuvi_library_test_peak2peak_nan();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
+  printfp("'overflow_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_peak2peak_input_check();
+  pass = ruuvi_library_test_peak2peak_overflow();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
+
+  printfp("'input_validation':");
+  (*total_tests)++;
+  pass = ruuvi_library_test_peak2peak_input_check();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
+  printfp("}\r\n");
 }
 
 /**
@@ -33,7 +49,7 @@ static void ruuvi_library_test_peak2peak(uint32_t* const total_tests, uint32_t* 
  * @param[in, out] total Total number of tests which have been run. Gets incremented.
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
-static void ruuvi_library_test_rms(uint32_t* const total_tests, uint32_t* const passed)
+static void ruuvi_library_test_rms(uint32_t* const total_tests, uint32_t* const passed, const ruuvi_library_test_print_fp printfp)
 {
   (*total_tests)++;
   (*passed) += ruuvi_library_test_rms_ok();
@@ -54,7 +70,7 @@ static void ruuvi_library_test_rms(uint32_t* const total_tests, uint32_t* const 
  * @param[in, out] total Total number of tests which have been run. Gets incremented.
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
-static void ruuvi_library_test_variance(uint32_t* const total_tests, uint32_t* const passed)
+static void ruuvi_library_test_variance(uint32_t* const total_tests, uint32_t* const passed, const ruuvi_library_test_print_fp printfp)
 {
   (*total_tests)++;
   (*passed) += ruuvi_library_test_variance_ok();
@@ -75,7 +91,7 @@ static void ruuvi_library_test_variance(uint32_t* const total_tests, uint32_t* c
  * @param[in, out] total Total number of tests which have been run. Gets incremented.
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
-static void ruuvi_library_test_ringbuffer(uint32_t* const total_tests, uint32_t* const passed)
+static void ruuvi_library_test_ringbuffer(uint32_t* const total_tests, uint32_t* const passed, const ruuvi_library_test_print_fp printfp)
 {
   (*total_tests)++;
   (*passed) += ruuvi_library_test_ringbuffer_put_get();
@@ -91,14 +107,16 @@ bool ruuvi_library_test_all_run(const ruuvi_library_test_print_fp printfp)
 { 
   uint32_t total_tests = 0;
   uint32_t passed = 0;
-
-  ruuvi_library_test_peak2peak(&total_tests, &passed);
-  ruuvi_library_test_rms(&total_tests, &passed);
-  ruuvi_library_test_variance(&total_tests, &passed);
-  ruuvi_library_test_ringbuffer(&total_tests, &passed);
+  ruuvi_library_test_peak2peak(&total_tests, &passed, printfp);
+  printfp(",");
+  ruuvi_library_test_rms(&total_tests, &passed, printfp);
+  printfp(",");
+  ruuvi_library_test_variance(&total_tests, &passed, printfp);
+  printfp(",");
+  ruuvi_library_test_ringbuffer(&total_tests, &passed, printfp);
 
   char msg[128] = {0};
-  snprintf(msg, sizeof(msg), "Library tests ran: %lu, passed: %lu.\r\n", total_tests, passed);
+  snprintf(msg, sizeof(msg), "'total_tests':'%lu', 'passed_tests':'%lu'\r\n", total_tests, passed);
   printfp(msg);
 
   return (total_tests == passed);
@@ -107,8 +125,7 @@ bool ruuvi_library_test_all_run(const ruuvi_library_test_print_fp printfp)
 bool ruuvi_library_expect_close(const float expect, const int8_t precision, const float check)
 {
   if(!isfinite(expect) || !isfinite(check)) { return false; }
-  const float max_delta = pow(10, precision);
-  float delta = expect - check;
-  if(delta < 0) { delta = 0 - delta; } // absolute value
+  const float max_delta = pow(10, -precision);
+  float delta = fabs(expect - check);
   return max_delta > delta;
 }
