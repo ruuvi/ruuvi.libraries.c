@@ -1,0 +1,3 @@
+[submodule "compress/bitpack"]
+	path = compress/bitpack
+	url = https://github.com/simonhaines/bitpack.git
