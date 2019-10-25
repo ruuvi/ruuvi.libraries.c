@@ -24,7 +24,7 @@ ruuvi_library_status_t ruuvi_library_ringbuffer_dequeue(ruuvi_library_ringbuffer
 {
   if(NULL == buffer || NULL == data)         { return RUUVI_LIBRARY_ERROR_NULL; }
   if(ruuvi_library_ringbuffer_empty(buffer)) { return RUUVI_LIBRARY_ERROR_NO_DATA; }
-  if(!buffer->lock(buffer->readlock, true))  {return RUUVI_LIBRARY_ERROR_CONCURRENCY; }
+  if(!buffer->lock(buffer->readlock, true))  { return RUUVI_LIBRARY_ERROR_CONCURRENCY; }
 
   void** p_data = (void**)data;
   *p_data = buffer->storage + (buffer->tail * buffer->block_size);
