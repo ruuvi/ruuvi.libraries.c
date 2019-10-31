@@ -40,7 +40,7 @@ static void ruuvi_library_test_peak2peak(uint32_t* const total_tests, uint32_t* 
   pass = ruuvi_library_test_peak2peak_input_check();
   (*passed) += pass;
   pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
-  printfp("}\r\n");
+  printfp("}");
 }
 
 /**
@@ -51,17 +51,32 @@ static void ruuvi_library_test_peak2peak(uint32_t* const total_tests, uint32_t* 
  */
 static void ruuvi_library_test_rms(uint32_t* const total_tests, uint32_t* const passed, const ruuvi_library_test_print_fp printfp)
 {
+  bool pass = false;
+  printfp("'rms':{\r\n");
+  printfp("'valid_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_rms_ok();
+  pass = ruuvi_library_test_rms_ok();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_rms_nan();
+  printfp("'nan_data':");
+  pass = ruuvi_library_test_rms_nan();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_rms_overflow();
+  printfp("'overflow_data':");
+  pass = ruuvi_library_test_rms_overflow();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_rms_input_check();
+  printfp("'input_validation':");
+  pass = ruuvi_library_test_rms_input_check();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
+  printfp("}");
 }
 
 /**
@@ -108,15 +123,15 @@ bool ruuvi_library_test_all_run(const ruuvi_library_test_print_fp printfp)
   uint32_t total_tests = 0;
   uint32_t passed = 0;
   ruuvi_library_test_peak2peak(&total_tests, &passed, printfp);
-  printfp(",");
+  printfp(",\r\n");
   ruuvi_library_test_rms(&total_tests, &passed, printfp);
-  printfp(",");
+  printfp(",\r\n");
   ruuvi_library_test_variance(&total_tests, &passed, printfp);
-  printfp(",");
+  printfp(",\r\n");
   ruuvi_library_test_ringbuffer(&total_tests, &passed, printfp);
 
   char msg[128] = {0};
-  snprintf(msg, sizeof(msg), "'total_tests':'%lu', 'passed_tests':'%lu'\r\n", total_tests, passed);
+  snprintf(msg, sizeof(msg), "'total_tests':'%lu',\r\n'passed_tests':'%lu'\r\n", total_tests, passed);
   printfp(msg);
 
   return (total_tests == passed);
