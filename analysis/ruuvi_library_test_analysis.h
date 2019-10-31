@@ -57,8 +57,8 @@ bool ruuvi_library_test_peak2peak_overflow(void);
 bool ruuvi_library_test_peak2peak_input_check(void);
 
 #define RLT_RMS_OK_VECTOR       {0.02f, 0.05f, -0.01f, -0.10f, 0.0f}
-#define RLT_RMS_OK_EXPECT       (0.12f)
-#define RLT_RMS_OK_DECIMALS     (2)
+#define RLT_RMS_OK_EXPECT       (0.051f)
+#define RLT_RMS_OK_DECIMALS     (3)
 #define RLT_RMS_NAN_VECTOR      {0.02f, 0.05f, NAN, -0.10f, 0.0f}
 #define RLT_RMS_OVERFLOW_VECTOR {0.02f, 0.05f, FLT_MAX, 0-FLT_MAX, 0.0f}
 
@@ -91,8 +91,8 @@ bool ruuvi_library_test_rms_overflow(void);
 bool ruuvi_library_test_rms_input_check(void);
 
 #define RLT_VARIANCE_OK_VECTOR       {0.02f, 0.05f, -0.01f, -0.10f, 0.0f}
-#define RLT_VARIANCE_OK_EXPECT       (0.12f)
-#define RLT_VARIANCE_OK_DECIMALS     (2)
+#define RLT_VARIANCE_OK_EXPECT       (0.0025)
+#define RLT_VARIANCE_OK_DECIMALS     (4)
 #define RLT_VARIANCE_NAN_VECTOR      {0.02f, 0.05f, NAN, -0.10f, 0.0f}
 #define RLT_VARIANCE_OVERFLOW_VECTOR {0.02f, 0.05f, FLT_MAX, 0-FLT_MAX, 0.0f}
 
