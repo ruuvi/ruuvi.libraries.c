@@ -87,17 +87,32 @@ static void ruuvi_library_test_rms(uint32_t* const total_tests, uint32_t* const 
  */
 static void ruuvi_library_test_variance(uint32_t* const total_tests, uint32_t* const passed, const ruuvi_library_test_print_fp printfp)
 {
+  bool pass = false;
+  printfp("'variance':{\r\n");
+  printfp("'valid_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_variance_ok();
+  pass = ruuvi_library_test_variance_ok();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
+  printfp("'nan_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_variance_nan();
+  pass = ruuvi_library_test_variance_nan();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
+  printfp("'overflow_data':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_variance_overflow();
+  pass = ruuvi_library_test_variance_overflow();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
 
+  printfp("'input_validation':");
   (*total_tests)++;
-  (*passed) += ruuvi_library_test_variance_input_check();
+  pass = ruuvi_library_test_variance_input_check();
+  (*passed) += pass;
+  pass ? printfp("'pass',\r\n") : printfp("'fail',\r\n");
+  printfp("}");
 }
 
 /**
