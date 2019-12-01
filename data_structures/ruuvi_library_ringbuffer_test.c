@@ -6,7 +6,7 @@
 #include <string.h>
 
 /** Dummy function to lock/unlock buffer */
-bool ruuvi_library_test_ringbuffer_lock_dummy(volatile void* const flag, bool lock)
+bool ruuvi_library_test_ringbuffer_lock_dummy(volatile uint32_t* const flag, bool lock)
 {
   bool* p_bool = (bool*) flag;
   if(*p_bool == lock) return false;

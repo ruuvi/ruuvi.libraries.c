@@ -43,7 +43,7 @@
  * @param[in] set true to set flag, false to clear flag.
  * @return    true if operation was successful
  */
-typedef bool(*ruuvi_library_atomic_flag)(volatile void* const flag, const bool set);
+typedef bool(*ruuvi_library_atomic_flag)(volatile uint32_t* const flag, const bool set);
 
 /* @brief Struct definition for ringbuffer. 
  * 
