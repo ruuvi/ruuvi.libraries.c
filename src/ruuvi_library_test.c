@@ -1,3 +1,5 @@
+#include "ruuvi_library_enabled_modules.h"
+#if RL_INTEGRATION_TEST_ENABLED
 #include "ruuvi_library_test.h"
 #include "analysis/ruuvi_library_test_analysis.h"
 #include "data_structures/ruuvi_library_ringbuffer_test.h"
@@ -159,3 +161,4 @@ bool ruuvi_library_expect_close(const float expect, const int8_t precision, cons
   float delta = fabs(expect - check);
   return max_delta > delta;
 }
+#endif

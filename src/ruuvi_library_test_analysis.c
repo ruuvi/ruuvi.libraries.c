@@ -1,3 +1,5 @@
+#include "ruuvi_library_enabled_modules.h"
+#if RL_INTEGRATION_TEST_ENABLED
 #include "analysis/ruuvi_library_test_analysis.h"
 #include "analysis/ruuvi_library_peak2peak.h"
 #include "analysis/ruuvi_library_rms.h"
@@ -108,3 +110,4 @@ bool ruuvi_library_test_variance_input_check(void)
   t2 = ruuvi_library_variance(vector, 0);
   return isnan(t1) && isnan(t2);
 }
+#endif
