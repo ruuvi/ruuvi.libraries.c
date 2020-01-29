@@ -12,7 +12,7 @@
  */
 #include <stdint.h>
 
-#define RUUVI_LIBRARY_SEMVER "0.1.2"
+#define RUUVI_LIBRARIES_SEMVER "0.1.3"
 
 #define RUUVI_LIBRARY_SUCCESS 0                 //!< Success
 #define RUUVI_LIBRARY_ERROR_INTERNAL    (1<<0)  //!< Unknown error, some failed assumption. 
