@@ -5,38 +5,38 @@
  * @file ruuvi_library_compress_test.h
  * @author Oleg Protasevich
  * @date 2020-06-16
- * @brief Function for testing library functions. 
+ * @brief Function for testing library functions.
  * @copyright Copyright 2020 Ruuvi Innovations.
  *   This project is released under the BSD-3-Clause License.
  *
- * Run tests for library functions. 
+ * Run tests for library functions.
  */
 
 #include <stdbool.h>
 #include <stdint.h>
 
-/** 
+/**
  * @brief Ruuvi Library test compress/decompress function.
  * Try to do compess/decompress operation over library API.
- * 
- * @return true if test is valid, false if else. 
+ *
+ * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_compress_decompress(void);
+bool ruuvi_library_test_compress_decompress (void);
 
-/** 
+/**
  * @brief Ruuvi Library test compress/decompress function.
  * Try to do compess/decompress operation 2 times over library API.
- * 
- * @return true if test is valid, false if else. 
+ *
+ * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_compress_decompress_2_times(void);
+bool ruuvi_library_test_compress_decompress_2_times (void);
 
-/** 
+/**
  * @brief Ruuvi Library test compress/decompress function.
  * Try to cause errors in library API.
- * 
- * @return true if test is valid, false if else. 
+ *
+ * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_invalid_input(void);
+bool ruuvi_library_test_invalid_input (void);
 
 #endif
