@@ -50,7 +50,7 @@
 #define  RL_COMPRESS_DATA_SIZE              sizeof(rl_data_t)
 #define  RL_COMPRESS_BLOCK_SIZE_MAX         4096
 #define  RL_COMPRESS_BLOCK_SIZE_MIN         64
-#define  RL_COMPRESS_BLOCK_NUM              32
+#define  RL_COMPRESS_BLOCK_NUM              16
 
 #define  BLOCK_NUM_INVALID                  0xff
 #define  TIME_INVALID                       0xffffffff
@@ -75,7 +75,7 @@ static uint8_t get_block_null(void)
 }
 
 static uint8_t get_block_num(uint8_t * p_block,
-                      size_t block_size)
+                             size_t block_size)
 {
   uint8_t block_num = BLOCK_NUM_INVALID;
   for (uint8_t i = 0; i < RL_COMPRESS_BLOCK_NUM; i++)
@@ -86,18 +86,6 @@ static uint8_t get_block_num(uint8_t * p_block,
       break;
     }
   }
-  
-  if (block_num == BLOCK_NUM_INVALID)
-  {
-    block_num = get_block_null();
-    if (block_num != BLOCK_NUM_INVALID)
-    {
-      blocks_size[block_num] = (uint32_t)block_size;
-      blocks_address[block_num] = p_block;
-      blocks_compressed_size[block_num] = 0;
-    }
-  }
-
   return block_num;
 }
 
@@ -108,13 +96,14 @@ static void rl_data_round(rl_data_t *p_data)
 }
 
 
-static ret_type_t find_data_and_remove(rl_data_t *p_data, rl_data_t p_blocks[], 
-                                 timestamp_t *start_timestamp)
+static ret_type_t find_data_and_remove(uint8_t block_num, rl_data_t *p_data, 
+                                       rl_data_t p_blocks[], 
+                                       timestamp_t *start_timestamp)
 {
   ret_type_t status = RL_COMPRESS_SUCCESS;
   timestamp_t min_time = TIME_INVALID;
   uint16_t array_offset = 0;
-  uint16_t array_size = (uint16_t)(RL_COMPRESS_BLOCK_SIZE_MAX/RL_COMPRESS_DATA_SIZE);
+  uint16_t array_size = (uint16_t)(blocks_size[block_num]/RL_COMPRESS_DATA_SIZE);
   for (uint16_t i = 0; i< array_size; i++)
   {
     if (p_blocks[i].time >= (*start_timestamp)){
@@ -131,7 +120,7 @@ static ret_type_t find_data_and_remove(rl_data_t *p_data, rl_data_t p_blocks[],
     if (array_offset != (array_size -1))
     {
       memcpy(&p_blocks[array_offset],&p_blocks[array_offset + 1], 
-             (array_size - array_offset - 1));
+             ((array_size - array_offset - 1)*RL_COMPRESS_DATA_SIZE));
     }
     (*start_timestamp) = min_time;
   }
@@ -167,22 +156,32 @@ ret_type_t rl_compress(rl_data_t * data,
       else
       {
         block_num = get_block_num(block,block_size);
+        if (block_num == BLOCK_NUM_INVALID)
+        {
+          block_num = get_block_null();
+          if (block_num != BLOCK_NUM_INVALID)
+          {
+            blocks_size[block_num] = (uint32_t)block_size;
+            blocks_address[block_num] = block;
+            blocks_compressed_size[block_num] = 0;
+          }
+        }
         if (block_num != BLOCK_NUM_INVALID)
         {
           if (0 == blocks_compressed_size[block_num])
           {
-            if (blocks_payload_counter[block_num] != blocks_size[block_num]/RL_COMPRESS_DATA_SIZE)
+            if (blocks_payload_counter[block_num] < (blocks_size[block_num]/RL_COMPRESS_DATA_SIZE))
             {
 #ifdef RL_COMPRESS_CONVERT_TO_INT
               rl_data_round(data);
+#endif
               memcpy((block + (blocks_payload_counter[block_num]*RL_COMPRESS_DATA_SIZE)),
                       data, 
                       RL_COMPRESS_DATA_SIZE);
-#endif
               blocks_payload_counter[block_num]++;
             }
 
-            if (blocks_payload_counter[block_num] == blocks_size[block_num]/RL_COMPRESS_DATA_SIZE)
+            if (blocks_payload_counter[block_num] >= blocks_size[block_num]/RL_COMPRESS_DATA_SIZE)
             {
               uint8_t uncomressed_block[RL_COMPRESS_BLOCK_SIZE_MAX];
               uint32_t compess_len = (blocks_size[block_num] > RL_COMPRESS_SIZE_LIMIT) ? 
@@ -206,6 +205,10 @@ ret_type_t rl_compress(rl_data_t * data,
                   blocks_compressed_size[block_num] = len;
               }
             }
+          }
+          else
+          {
+            status = RL_COMPRESS_ERROR_INVALID_STATE;
           }
         }
         else
@@ -264,7 +267,7 @@ ret_type_t rl_decompress(rl_data_t * data,
           }
           if (status == RL_COMPRESS_SUCCESS)
           {
-            status = find_data_and_remove(data, uncomressed_block, 
+            status = find_data_and_remove(block_num, data, uncomressed_block, 
                                           start_timestamp);
             if (status == RL_COMPRESS_SUCCESS)
             {
@@ -273,8 +276,17 @@ ret_type_t rl_decompress(rl_data_t * data,
                      blocks_size[block_num]);
               blocks_compressed_size[block_num] = 0;
               blocks_payload_counter[block_num]--;
+              if (0 == blocks_payload_counter[block_num])
+              {
+                blocks_size[block_num] = 0;
+                blocks_address[block_num] = NULL;
+              }
             }
           }
+        }
+        else
+        {
+           status = RL_COMPRESS_ERROR_INVALID_STATE;
         }
       }
     }
