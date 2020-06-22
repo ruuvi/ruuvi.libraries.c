@@ -1,8 +1,8 @@
 #include "ruuvi_library_enabled_modules.h"
 #if RL_INTEGRATION_TEST_ENABLED
 #include "ruuvi_library_test.h"
-#include "analysis/ruuvi_library_test_analysis.h"
-#include "data_structures/ruuvi_library_ringbuffer_test.h"
+#include "ruuvi_library_test_analysis.h"
+#include "ruuvi_library_ringbuffer_test.h"
 #include "ruuvi_library_compress_test.h"
 #include <math.h>
 #include <stdint.h>

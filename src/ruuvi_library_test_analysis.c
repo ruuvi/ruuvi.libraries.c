@@ -1,9 +1,9 @@
 #include "ruuvi_library_enabled_modules.h"
 #if RL_INTEGRATION_TEST_ENABLED
-#include "analysis/ruuvi_library_test_analysis.h"
-#include "analysis/ruuvi_library_peak2peak.h"
-#include "analysis/ruuvi_library_rms.h"
-#include "analysis/ruuvi_library_variance.h"
+#include "ruuvi_library_test_analysis.h"
+#include "ruuvi_library_peak2peak.h"
+#include "ruuvi_library_rms.h"
+#include "ruuvi_library_variance.h"
 #include "ruuvi_library_test.h"
 #include <math.h>
 
