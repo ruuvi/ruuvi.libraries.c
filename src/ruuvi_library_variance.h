@@ -15,11 +15,11 @@
 #include <stdlib.h>
 /// @cond 0
 #ifndef NAN
-  error "NAN is not defined"
+error "NAN is not defined"
 #endif
 /// @endcond
-  
-/** @ingroup analysis 
+
+/** @ingroup analysis
  *  @{
  */
 /**
@@ -30,7 +30,7 @@
  * @param data_length[in] Number of values
  * @return Variance of samples, NAN if any of given values is NAN or input parameters are invalid
  */
-float ruuvi_library_variance(const float* const data, const size_t data_length);
+float ruuvi_library_variance (const float * const data, const size_t data_length);
 
 /** @} */ // End of group analysis
 #endif
