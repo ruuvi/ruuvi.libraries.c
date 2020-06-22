@@ -45,7 +45,7 @@ static rl_data_t find_data =
     RL_COMPRESS_TEST_PRESSURE_DEFAULT,
 };
 
-rl_compress_state_t htab;
+static rl_compress_state_t htab;
 
 static bool ruuvi_library_test_decompress (rl_data_t * p_find_data,
         uint8_t * p_block,
@@ -296,7 +296,7 @@ static bool ruuvi_library_test_null()
 bool ruuvi_library_test_compress_decompress()
 {
     bool result =  true;
-    uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_DEFAULT];
+    uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_DEFAULT] = {0};
     timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
     memset (htab, 0, sizeof (htab));
 
@@ -320,7 +320,7 @@ bool ruuvi_library_test_compress_decompress()
 bool ruuvi_library_test_compress_decompress_2_times()
 {
     bool result =  true;
-    uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_DEFAULT];
+    uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_DEFAULT] = { 0 };
     timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_DEFAULT;
     memset (htab, 0, sizeof (htab));
 
