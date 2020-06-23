@@ -352,13 +352,9 @@ bool ruuvi_library_test_compress_decompress_2_times()
                 {
                     result = false;
                 }
-
+                //Used to clear compressed block
                 start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-
-                if (false == ruuvi_library_test_decompress_all (&block[0], &start_timestamp))
-                {
-                    result = false;
-                }
+                ruuvi_library_test_decompress_all (&block[0], &start_timestamp);
             }
         }
     }
