@@ -167,6 +167,11 @@ static void ruuvi_library_test_compress (uint32_t * const total_tests,
     pass = ruuvi_library_test_compress_decompress_2_times();
     (*passed) += pass;
     pass ? printfp ("\"pass\",\r\n") : printfp ("\"fail\",\r\n");
+    printfp ("\"compress_ratio\":");
+    (*total_tests)++;
+    pass = ruuvi_library_test_compress_decompress_ratio (printfp);
+    (*passed) += pass;
+    pass ? printfp ("\"pass\",\r\n") : printfp ("\"fail\",\r\n");
     (*total_tests)++;
     printfp ("\"invalid_input\":");
     pass = ruuvi_library_test_invalid_input();
