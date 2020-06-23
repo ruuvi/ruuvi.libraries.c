@@ -41,6 +41,17 @@ typedef struct
 
 /**
  * @brief Ruuvi Library compress function.
+ * Get compessed size from block
+ *
+ * @param[in] block Pointer to buffer which has sensor data.
+ * @param[in,out] compessed_size Compessed size in block.
+ * @return status code indicating if block has compressed data.
+ *
+ */
+ret_type_t rl_get_compressed_size (uint8_t * block,
+                                   size_t * compessed_size);
+/**
+ * @brief Ruuvi Library compress function.
  * Takes a sensor data sample in and appends it to given data block.
  * It can be assumed that data is appended in linear order, new sample has always greater timestamp than previous.
  *

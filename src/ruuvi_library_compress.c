@@ -37,8 +37,7 @@ static uint8_t get_block_null (void)
     return block_num;
 }
 
-static uint8_t get_block_num (uint8_t * p_block,
-                              size_t block_size)
+static uint8_t get_block_num (uint8_t * p_block)
 {
     uint8_t block_num = BLOCK_NUM_INVALID;
 
@@ -102,6 +101,34 @@ static ret_type_t find_data_and_remove (uint8_t block_num, rl_data_t * p_data,
     return status;
 }
 
+ret_type_t rl_get_compressed_size (uint8_t * block,
+                                   size_t * compessed_size)
+{
+    ret_type_t status = RL_COMPRESS_SUCCESS;
+    uint8_t block_num = BLOCK_NUM_INVALID;
+
+    if ( (NULL == block) ||
+            (NULL == compessed_size))
+    {
+        status = RL_COMPRESS_ERROR_NULL;
+    }
+    else
+    {
+        block_num = get_block_num (block);
+
+        if (block_num == BLOCK_NUM_INVALID)
+        {
+            status = RL_COMPRESS_ERROR_INVALID_STATE;
+        }
+        else
+        {
+            (*compessed_size) = (size_t) blocks_compressed_size[block_num];
+        }
+    }
+
+    return status;
+}
+
 ret_type_t rl_compress (rl_data_t * data,
                         uint8_t * block,
                         size_t block_size,
@@ -127,7 +154,7 @@ ret_type_t rl_compress (rl_data_t * data,
         }
         else
         {
-            block_num = get_block_num (block, block_size);
+            block_num = get_block_num (block);
 
             if (block_num == BLOCK_NUM_INVALID)
             {
@@ -223,11 +250,12 @@ ret_type_t rl_decompress (rl_data_t * data,
         }
         else
         {
-            block_num = get_block_num (block, block_size);
+            block_num = get_block_num (block);
 
             if (block_num != BLOCK_NUM_INVALID)
             {
                 rl_data_t uncomressed_block[RL_COMPRESS_BLOCK_SIZE_MAX / RL_COMPRESS_DATA_SIZE];
+                memset (uncomressed_block, 0, RL_COMPRESS_BLOCK_SIZE_MAX);
 
                 if (0 != blocks_compressed_size[block_num])
                 {
