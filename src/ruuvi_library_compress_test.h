@@ -14,6 +14,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "ruuvi_library_test.h"
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
@@ -30,6 +31,15 @@ bool ruuvi_library_test_compress_decompress (void);
  * @return true if test is valid, false if else.
  */
 bool ruuvi_library_test_compress_decompress_2_times (void);
+
+/**
+ * @brief Ruuvi Library test compress/decompress function.
+ * Used to print compress ratio
+ *
+ * @return true if test is valid, false if else.
+ */
+bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_print_fp
+        printfp);
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
