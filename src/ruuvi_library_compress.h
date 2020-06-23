@@ -27,8 +27,7 @@
 #define RL_COMPRESS_PAYLOAD_SIZE            3
 
 typedef uint32_t timestamp_t;
-typedef uint32_t
-ret_type_t;                          ///< bitfield for representing errors
+typedef uint32_t ret_type_t;  ///< bitfield for representing errors
 typedef LZF_HSLOT rl_compress_state_t[RL_COMPRESS_STATE_SIZE];
 
 #pragma pack(push, 1)
