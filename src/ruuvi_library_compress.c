@@ -53,6 +53,31 @@ static uint8_t get_block_num (uint8_t * p_block)
     return block_num;
 }
 
+static ret_type_t validate_block (uint8_t * p_block,
+                                  size_t block_size)
+{
+    ret_type_t status = RL_COMPRESS_SUCCESS;
+
+    for (uint8_t i = 0; i < RL_COMPRESS_BLOCK_NUM; i++)
+    {
+        if (NULL != blocks_address[i])
+        {
+            if ( ( (p_block + block_size) <= blocks_address[i]) ||
+                    (p_block >= (blocks_address[i] + blocks_compressed_size[i])))
+            {
+                status += RL_COMPRESS_SUCCESS;
+            }
+            else
+            {
+                status += RL_COMPRESS_ERROR_INVALID_STATE;
+                break;
+            }
+        }
+    }
+
+    return status;
+}
+
 static void rl_data_round (rl_data_t * p_data)
 {
     for (uint8_t i = 0; i < RL_COMPRESS_PAYLOAD_SIZE; i++)
@@ -154,58 +179,86 @@ ret_type_t rl_compress (rl_data_t * data,
         }
         else
         {
-            block_num = get_block_num (block);
-
-            if (block_num == BLOCK_NUM_INVALID)
+            if (RL_COMPRESS_SUCCESS == validate_block (block, block_size))
             {
-                block_num = get_block_null();
+                block_num = get_block_num (block);
+
+                if (block_num == BLOCK_NUM_INVALID)
+                {
+                    block_num = get_block_null();
+
+                    if (block_num != BLOCK_NUM_INVALID)
+                    {
+                        blocks_size[block_num] = (uint32_t) block_size;
+                        blocks_address[block_num] = block;
+                        blocks_compressed_size[block_num] = 0;
+                        blocks_payload_counter[block_num] = 0;
+                    }
+                }
 
                 if (block_num != BLOCK_NUM_INVALID)
                 {
-                    blocks_size[block_num] = (uint32_t) block_size;
-                    blocks_address[block_num] = block;
-                    blocks_compressed_size[block_num] = 0;
-                }
-            }
-
-            if (block_num != BLOCK_NUM_INVALID)
-            {
-                if (0 == blocks_compressed_size[block_num])
-                {
-                    if (blocks_payload_counter[block_num] < (blocks_size[block_num] / RL_COMPRESS_DATA_SIZE))
+                    if (0 == blocks_compressed_size[block_num])
                     {
+                        if (blocks_payload_counter[block_num] < (blocks_size[block_num] / RL_COMPRESS_DATA_SIZE))
+                        {
 #ifdef RL_COMPRESS_CONVERT_TO_INT
-                        rl_data_round (data);
+                            rl_data_round (data);
 #endif
-                        memcpy ( (block + (blocks_payload_counter[block_num]*RL_COMPRESS_DATA_SIZE)),
-                                 data,
-                                 RL_COMPRESS_DATA_SIZE);
-                        blocks_payload_counter[block_num]++;
+                            memcpy ( (block + (blocks_payload_counter[block_num]*RL_COMPRESS_DATA_SIZE)),
+                                     data,
+                                     RL_COMPRESS_DATA_SIZE);
+                            blocks_payload_counter[block_num]++;
+                        }
+
+                        if (blocks_payload_counter[block_num] >= blocks_size[block_num] / RL_COMPRESS_DATA_SIZE)
+                        {
+                            uint8_t uncomressed_block[RL_COMPRESS_BLOCK_SIZE_MAX];
+                            uint32_t compess_len = (blocks_size[block_num] > RL_COMPRESS_SIZE_LIMIT) ?
+                                                   (blocks_size[block_num] - RL_COMPRESS_SIZE_LIMIT) :
+                                                   (blocks_size[block_num]);
+                            memcpy (&uncomressed_block,
+                                    block,
+                                    blocks_size[block_num]);
+                            len = (uint32_t) lzf_compress ( (u8 *) uncomressed_block,
+                                                            (unsigned int) blocks_size[block_num],
+                                                            (u8 *) (block),
+                                                            (unsigned int) compess_len,
+                                                            (const u8 **) state);
+
+                            if (LZF_NO_RESULT == len)
+                            {
+                                status = RL_COMPRESS_ERROR_INVALID_STATE;
+                            }
+                            else
+                            {
+                                blocks_compressed_size[block_num] = len;
+
+                                if (0 < block_num)
+                                {
+                                    if ( (blocks_address[block_num] ==
+                                            (blocks_address[block_num - 1] +
+                                             blocks_compressed_size[block_num - 1])))
+                                    {
+                                        if (RL_COMPRESS_BLOCK_SIZE_MAX >=
+                                                (blocks_size[block_num - 1] + blocks_size[block_num]))
+                                        {
+                                            blocks_compressed_size[block_num - 1] += blocks_compressed_size[block_num];
+                                            blocks_size[block_num - 1] += blocks_size[block_num];
+                                            blocks_payload_counter[block_num - 1] += blocks_payload_counter[block_num];
+                                            blocks_size[block_num] = 0;
+                                            blocks_compressed_size[block_num] = 0;
+                                            blocks_address[block_num] = NULL;
+                                            blocks_payload_counter[block_num] = 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-
-                    if (blocks_payload_counter[block_num] >= blocks_size[block_num] / RL_COMPRESS_DATA_SIZE)
+                    else
                     {
-                        uint8_t uncomressed_block[RL_COMPRESS_BLOCK_SIZE_MAX];
-                        uint32_t compess_len = (blocks_size[block_num] > RL_COMPRESS_SIZE_LIMIT) ?
-                                               (blocks_size[block_num] - RL_COMPRESS_SIZE_LIMIT) :
-                                               (blocks_size[block_num]);
-                        memcpy (&uncomressed_block,
-                                block,
-                                blocks_size[block_num]);
-                        len = (uint32_t) lzf_compress ( (u8 *) uncomressed_block,
-                                                        (unsigned int) blocks_size[block_num],
-                                                        (u8 *) (block),
-                                                        (unsigned int) compess_len,
-                                                        (const u8 **) state);
-
-                        if (LZF_NO_RESULT == len)
-                        {
-                            status = RL_COMPRESS_ERROR_INVALID_STATE;
-                        }
-                        else
-                        {
-                            blocks_compressed_size[block_num] = len;
-                        }
+                        status = RL_COMPRESS_ERROR_INVALID_STATE;
                     }
                 }
                 else
@@ -260,7 +313,7 @@ ret_type_t rl_decompress (rl_data_t * data,
                 if (0 != blocks_compressed_size[block_num])
                 {
                     if (LZF_NO_RESULT == lzf_decompress ( (u8 *) block, blocks_compressed_size[block_num],
-                                                          (u8 *) uncomressed_block, (blocks_size[block_num])))
+                                                          (u8 *) uncomressed_block, blocks_size[block_num]))
                     {
                         status = RL_COMPRESS_ERROR_INVALID_STATE;
                     }
