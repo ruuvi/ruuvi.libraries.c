@@ -408,37 +408,62 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
         printfp)
 {
     bool result =  true;
-    uint16_t counter = 0;
-    uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_DATA_SIZE_DEFAULT];
+    uint16_t counter = 0; //!< Number of bytes compressed
+    uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_DATA_SIZE_DEFAULT] = {0};
+    uint16_t subblock_size = RL_COMPRESS_TEST_BLOCK_SIZE_RATIO; //!< Size of next subblock.
     uint8_t * p_block = (uint8_t *) &block[0];
     size_t c_size = 0;
     float ratio = 0;
+    ret_type_t lib_status = RL_COMPRESS_SUCCESS;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_TIME_DEFAULT;
     memset (htab, 0, sizeof (htab));
 
-    for (counter;
-            counter < (RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_BLOCK_NUM_RATIO);
-            counter += RL_COMPRESS_TEST_DATA_SIZE_DEFAULT)
+    // Compress as much as possible
+    while ( (RL_COMPRESS_SUCCESS == lib_status))
     {
-        if (RL_COMPRESS_SUCCESS == rl_compress (&test_data, p_block,
-                                                RL_COMPRESS_TEST_BLOCK_SIZE_RATIO, &htab))
+        // Try to append uncompressed data to block.
+        // rl_compress returns RL_COMPRESS_SUCCESS if data was appended
+        lib_status = rl_compress (&test_data, p_block, subblock_size, &htab);
+
+        if (RL_COMPRESS_SUCCESS == lib_status)
         {
+            // Simulate change in sensor data.
             test_data.time++;
+            counter += sizeof (test_data);
         }
-        else
+        // Compress lib returns other status code if no new uncompressed data can
+        // be appended and data was compressed in place instead.
+        else if (/*lib_status == RL_COMPRESS_? TODO fix this hang*/ 1)
         {
             c_size = 0;
 
-            if (RL_COMPRESS_SUCCESS == rl_get_compressed_size ( (uint8_t *) &block[0], &c_size))
+            // If no new data could be added to block, the block is compressed.
+            // We can reuse the space in block which still holds uncompressed data.
+            if (RL_COMPRESS_SUCCESS == rl_get_compressed_size (block, &c_size))
             {
-                p_block = (uint8_t *) &block[0] + c_size;
-                counter -= RL_COMPRESS_TEST_DATA_SIZE_DEFAULT;
+                // Advance to start of uncompressed data.
+                p_block = (uint8_t *) (&block[0] + c_size);
+                // Check if there is space for a new subblock.
+                subblock_size = (uint16_t) (block + sizeof (block) - p_block);
+
+                if (RL_COMPRESS_TEST_BLOCK_SIZE_RATIO < subblock_size)
+                {
+                    subblock_size = RL_COMPRESS_TEST_BLOCK_SIZE_RATIO;
+                    lib_status = RL_COMPRESS_SUCCESS;
+                }
             }
+            // If the block used for compression is corrupted, fail the test.
             else
             {
                 result = false;
                 break;
             }
+        }
+        // If compression failed while space was remaining, stop test as a failure.
+        else
+        {
+            result = false;
+            break;
         }
     }
 
@@ -450,11 +475,9 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
 
         if (RL_COMPRESS_SUCCESS == rl_get_compressed_size (p_block, &c_size))
         {
-            ratio = (float) (RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_BLOCK_NUM_RATIO);
-            ratio = (float) (ratio / c_size);
+            ratio = (float) c_size / (float) counter;
             char msg[128] = {0};
-            snprintf (msg, sizeof (msg), "\"block_address %d, compress_ratio %02.02f\",\r\n",
-                      p_block, ratio);
+            snprintf (msg, sizeof (msg), "\"compress_ratio:\"\"%02.02f\%\",\r\n", ratio);
             printfp (msg);
         }
 
