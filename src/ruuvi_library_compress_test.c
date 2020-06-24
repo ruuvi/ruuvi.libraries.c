@@ -159,6 +159,16 @@ static bool ruuvi_library_test_invalid_state()
 
     if (result ==  true)
     {
+        if (RL_COMPRESS_ERROR_INVALID_STATE != rl_compress (&test_data,
+                (uint8_t *) ( (uint8_t *) &block + 2),
+                RL_COMPRESS_TEST_BLOCK_SIZE_DEFAULT, &htab))
+        {
+            result = false;
+        }
+    }
+
+    if (result ==  true)
+    {
         if (RL_COMPRESS_ERROR_INVALID_STATE != rl_get_compressed_size ( (uint8_t *) ( (
                     uint8_t *) &block +
                 (RL_COMPRESS_TEST_BLOCK_SIZE_DEFAULT *
@@ -401,7 +411,6 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     uint16_t counter = 0;
     uint8_t block[RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_DATA_SIZE_DEFAULT];
     uint8_t * p_block = (uint8_t *) &block[0];
-    uint8_t * f_block = (uint8_t *) &block[0];
     size_t c_size = 0;
     float ratio = 0;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_TIME_DEFAULT;
@@ -420,10 +429,9 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
         {
             c_size = 0;
 
-            if (RL_COMPRESS_SUCCESS == rl_get_compressed_size (p_block, &c_size))
+            if (RL_COMPRESS_SUCCESS == rl_get_compressed_size ( (uint8_t *) &block[0], &c_size))
             {
-                test_data.time = RL_COMPRESS_TEST_TIME_DEFAULT;
-                p_block += RL_COMPRESS_TEST_BLOCK_SIZE_RATIO;
+                p_block = (uint8_t *) &block[0] + c_size;
                 counter -= RL_COMPRESS_TEST_DATA_SIZE_DEFAULT;
             }
             else
@@ -436,28 +444,24 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
 
     if (true == result)
     {
-        for (counter = 0; counter < RL_COMPRESS_TEST_BLOCK_NUM_RATIO ; counter++)
+        p_block = (uint8_t *) &block[0];
+        start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
+        c_size = 0;
+
+        if (RL_COMPRESS_SUCCESS == rl_get_compressed_size (p_block, &c_size))
         {
-            start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
+            ratio = (float) (RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_BLOCK_NUM_RATIO);
+            ratio = (float) (ratio / c_size);
+            char msg[128] = {0};
+            snprintf (msg, sizeof (msg), "\"block_address %d, compress_ratio %02.02f\",\r\n",
+                      p_block, ratio);
+            printfp (msg);
+        }
 
-            if (RL_COMPRESS_SUCCESS == rl_get_compressed_size (p_block, &c_size))
-            {
-                ratio = (float) (RL_COMPRESS_TEST_BLOCK_SIZE_RATIO);
-                ratio = (float) (ratio / c_size);
-                char msg[128] = {0};
-                snprintf (msg, sizeof (msg), "\"block_address %d, compress_ratio %02.02f\",\r\n",
-                          p_block, ratio);
-                printfp (msg);
-            }
-
-            if (false == ruuvi_library_test_decompress_all (p_block, &start_timestamp,
-                    RL_COMPRESS_TEST_BLOCK_SIZE_RATIO))
-            {
-                result = false;
-                break;
-            }
-
-            p_block -= RL_COMPRESS_TEST_BLOCK_SIZE_RATIO;
+        if (false == ruuvi_library_test_decompress_all (p_block, &start_timestamp,
+                (RL_COMPRESS_TEST_BLOCK_SIZE_RATIO * RL_COMPRESS_TEST_BLOCK_NUM_RATIO)))
+        {
+            result = false;
         }
     }
 
