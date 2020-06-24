@@ -5,6 +5,9 @@ Libraries to be run on embedded devices.
  * Unless otherwise stated, code is BSD-3, please see [LICENSE](./LICENSE) for details.
 
 # Changelog
+## 0.2.0
+ - Add liblzf compression
+
 ## 0.1.3
  - rename semver string to RUUVI_LIBRARIES_SEMVER
 

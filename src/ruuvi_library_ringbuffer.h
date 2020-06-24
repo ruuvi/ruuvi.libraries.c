@@ -8,10 +8,10 @@
  *
  * This ringbuffer implementation is optimized for bluetooth GATT connection usage.
  * It has special emphasis on being usable when data is read in interrupt contect - no locking
- * The tradeoff is that the data storage must have size of power of two and 
+ * The tradeoff is that the data storage must have size of power of two and
  * the elemements are treated in chunks with size of power of two.
  */
- /*@{*/
+/*@{*/
 
 #ifndef  RUUVI_LIBRARY_RINGBUFFER_H
 #define  RUUVI_LIBRARY_RINGBUFFER_H
@@ -43,10 +43,11 @@
  * @param[in] set true to set flag, false to clear flag.
  * @return    true if operation was successful
  */
-typedef bool(*ruuvi_library_atomic_flag)(volatile uint32_t* const flag, const bool set);
+typedef bool (*ruuvi_library_atomic_flag) (volatile uint32_t * const flag,
+        const bool set);
 
-/* @brief Struct definition for ringbuffer. 
- * 
+/* @brief Struct definition for ringbuffer.
+ *
  * Initialization example:
  * \code{.c}
  * static uint8_t buffer_data[1024}; //!< Must be allocated on stack
@@ -58,35 +59,36 @@ typedef bool(*ruuvi_library_atomic_flag)(volatile uint32_t* const flag, const bo
  *                                              .storage_size = sizeof(buffer_data),
  *                                              .index_mask = (sizeof(buffer_data) / 32) - 1,
  *                                              .storage = buffer_data;
- *                                              .lock = ruuvi_interface_atomic_flag 
+ *                                              .lock = ruuvi_interface_atomic_flag
  *                                              .writelock = &buffer_wlock;
  *                                              .readlock  = &buffer_rlock};
  * \endcode
  */
-typedef struct {
-  size_t head;               //!< Ringbuffer head index
-  size_t tail;               //!< Ringbuffer tail index
-  const size_t block_size;   //!< Block size of elements, must be power of two
-  const size_t storage_size; //!< Size of storage element, must be power of two. 
-  const size_t index_mask;   //!< Bitmask of indexes. Must be (storege_size / block_size) -1
-  void* const storage;       //!< Pointer to storage.
-  /** @brief Function pointer to lock ringbuffer. Can be a dummy implementation which only 
-   *         returns true if buffer is used in single-thread environment without interrupts. 
-   */
-  const ruuvi_library_atomic_flag lock;
-  volatile void* const writelock;     //!< Memory address for flag locking write function
-  volatile void* const readlock;      //!< Memory address for flag locking read function.
-}ruuvi_library_ringbuffer_t;
+typedef struct
+{
+    size_t head;               //!< Ringbuffer head index
+    size_t tail;               //!< Ringbuffer tail index
+    const size_t block_size;   //!< Block size of elements, must be power of two
+    const size_t storage_size; //!< Size of storage element, must be power of two.
+    const size_t index_mask;   //!< Bitmask of indexes. Must be (storege_size / block_size) -1
+    void * const storage;      //!< Pointer to storage.
+    /** @brief Function pointer to lock ringbuffer. Can be a dummy implementation which only
+     *         returns true if buffer is used in single-thread environment without interrupts.
+     */
+    const ruuvi_library_atomic_flag lock;
+    volatile void * const writelock;    //!< Memory address for flag locking write function
+    volatile void * const readlock;     //!< Memory address for flag locking read function.
+} ruuvi_library_ringbuffer_t;
 
 /**
  * @brief Queue data into ringbuffer
  *
- * This function operates on the head of the buffer, and rejects operation if 
- * there is no more room in the buffer. 
- * 
+ * This function operates on the head of the buffer, and rejects operation if
+ * there is no more room in the buffer.
+ *
  * @param[in] buffer Pointer to ringbuffer to store data into
  * @param[in] data Data to store
- * @param[in] data_length length of data, at most @ref block_size. 
+ * @param[in] data_length length of data, at most @ref block_size.
  * @return    RUUVI_LIBRARY_SUCCESS if data was queued
  * @return    RUUVI_LIBRARY_ERROR_NO_MEM if the ringbuffer was full
  * @return    RUUVI_LIBRARY_ERROR_CONCURRENCY if could not obtain lock
@@ -94,58 +96,61 @@ typedef struct {
  * @return    RUUVI_LIBRARY_ERROR_NULL  if data or buffer are NULL
  * @return    RUUVI_LIBRARY_ERROR_DATA_LENGTH if data is bigger than buffer block size.
  */
-ruuvi_library_status_t ruuvi_library_ringbuffer_queue(ruuvi_library_ringbuffer_t* const buffer, 
-                                                      const void* const data,
-                                                      const size_t data_length);
+ruuvi_library_status_t ruuvi_library_ringbuffer_queue (ruuvi_library_ringbuffer_t * const
+        buffer,
+        const void * const data,
+        const size_t data_length);
 
 /**
  * @brief Dequeue data from ringbuffer
  *
- * This function operates on the tail of the buffer, and rejects operation if 
+ * This function operates on the tail of the buffer, and rejects operation if
  * there is no more elements in the buffer. Returns pointer to stored data,
  * does not copy it. The stored data can be overwritten by after function returns,
- * so take a deep copy of data if required. You can also use a peek function to 
+ * so take a deep copy of data if required. You can also use a peek function to
  * copy the data without dequeuing
- * 
+ *
  * @param[in,out] buffer Pointer to ringbuffer to load data from
  * @param[out]    data Pointer to data, will be assigned at the start of the stored object
  * @return        RUUVI_LIBRARY_SUCCESS if data was dequeued
  * @return        RUUVI_LIBRARY_ERROR_NO_DATA if the ringbuffer was empty
  * @warning       This function has no input checking
- * @warning       Data returned by this function can be overwritten, take a deep copy if required. 
+ * @warning       Data returned by this function can be overwritten, take a deep copy if required.
  */
-ruuvi_library_status_t ruuvi_library_ringbuffer_dequeue(ruuvi_library_ringbuffer_t* const buffer, 
-                                                        const void *data);
+ruuvi_library_status_t ruuvi_library_ringbuffer_dequeue (ruuvi_library_ringbuffer_t *
+        const buffer,
+        const void * data);
 
 /**
  * @brief Peek data in ringbuffer
  *
- * This function operates on the tail + offset of the buffer, and rejects operation if 
+ * This function operates on the tail + offset of the buffer, and rejects operation if
  * there are no more elements in the buffer. Returns pointer to stored data,
  * does not copy it. The stored data can be overwritten by after function returns,
- * so take a deep copy of data if required. 
- * 
+ * so take a deep copy of data if required.
+ *
  * @param[in,out] buffer Pointer to ringbuffer to peek data from
  * @param[out]    data Pointer to data, will be assigned at the start of the stored object
  * @param[in]     index offset to read data, starting from tail.
  * @return        RUUVI_LIBRARY_SUCCESS if data was queued
  * @return        RUUVI_LIBRARY_ERROR_NO_data if the ringbuffer doesn't have element at the given index
  * @warning       This function has no input checking
- * @warning       Data returned by this function can be overwritten, take a deep copy if required. 
+ * @warning       Data returned by this function can be overwritten, take a deep copy if required.
  */
-ruuvi_library_status_t ruuvi_library_ringbuffer_peek(ruuvi_library_ringbuffer_t* const buffer, 
-                                                        const void *data, const size_t index);
+ruuvi_library_status_t ruuvi_library_ringbuffer_peek (ruuvi_library_ringbuffer_t * const
+        buffer,
+        const void * data, const size_t index);
 
 /*
  * return true if rinbuffer is full
  */
-bool ruuvi_library_ringbuffer_full(const ruuvi_library_ringbuffer_t* const buffer);
+bool ruuvi_library_ringbuffer_full (const ruuvi_library_ringbuffer_t * const buffer);
 
 /*
  * return true if rinbuffer is empty
  */
-bool ruuvi_library_ringbuffer_empty(const ruuvi_library_ringbuffer_t* const buffer);
+bool ruuvi_library_ringbuffer_empty (const ruuvi_library_ringbuffer_t * const buffer);
 
 #endif
 
- /*@}*/
+/*@}*/
