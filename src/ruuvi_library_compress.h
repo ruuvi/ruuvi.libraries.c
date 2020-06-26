@@ -13,21 +13,33 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <stdio.h>
+#include <stdbool.h>
 #include "liblzf-3.6/lzf.h"
 
 //#define RL_COMPRESS_CONVERT_TO_INT
 
-#define RL_COMPRESS_SUCCESS                (0U)       ///< Internal Error
+#define RL_COMPRESS_SUCCESS                (0U)       ///< Success
 #define RL_COMPRESS_ERROR_INVALID_PARAM    (1U<<4U)   ///< Invalid Parameter
 #define RL_COMPRESS_ERROR_INVALID_STATE    (1U<<5U)   ///< Invalid state, operation disallowed in this state
 #define RL_COMPRESS_ERROR_NULL             (1U<<11U)  ///< Null Pointer
+#define RL_COMPRESS_END                    (1U<<22U)  ///< Compress/Decompress ended
 
 #define RL_COMPRESS_STATE_SIZE              1 << (HLOG)
 #define RL_COMPRESS_PAYLOAD_SIZE            3
+#define RL_COMPRESS_SIZE_LIMIT              sizeof(uint32_t)
+#define RL_COMPRESS_DATA_SIZE               sizeof(rl_data_t)
+#define RL_COMPRESS_BLOCK_SIZE_MAX          2048
+#define RL_COMPRESS_BLOCK_SIZE_MIN          64
+#define RL_COMPRESS_BLOCK_SIZE_DEFAULT      RL_COMPRESS_BLOCK_SIZE_MIN
+#define RL_COMPRESS_DEFAULT_COMPRESS_RATIO  2
+#define RL_COMPRESS_OVER_BLOCK_SIZE_MIN     RL_COMPRESS_BLOCK_SIZE_MIN
+#define RL_COMPRESS_OVER_BLOCK_SIZE_MAX     ((RL_COMPRESS_BLOCK_SIZE_MAX/RL_COMPRESS_DEFAULT_COMPRESS_RATIO)*RL_COMPRESS_OVER_BLOCK_SIZE_MIN)
+#define RL_COMPRESS_BLOCK_NUM               (RL_COMPRESS_BLOCK_SIZE_MAX/RL_COMPRESS_BLOCK_SIZE_MIN)
+#define RL_COMPRESS_OVER_BLOCK_NUM          1
 
 typedef uint32_t timestamp_t;
-typedef uint32_t ret_type_t;  ///< bitfield for representing errors
+typedef uint32_t
+ret_type_t;                          ///< bitfield for representing errors
 typedef LZF_HSLOT rl_compress_state_t[RL_COMPRESS_STATE_SIZE];
 
 #pragma pack(push, 1)
@@ -43,11 +55,13 @@ typedef struct
  * Get compessed size from block
  *
  * @param[in] block Pointer to buffer which has sensor data.
+ * @param[in] block_size Size of block.
  * @param[in,out] compessed_size Compessed size in block.
  * @return status code indicating if block has compressed data.
  *
  */
 ret_type_t rl_get_compressed_size (uint8_t * block,
+                                   size_t block_size,
                                    size_t * compessed_size);
 /**
  * @brief Ruuvi Library compress function.
