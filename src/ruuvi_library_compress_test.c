@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define RL_COMPRESS_TEST_TIME_DEFAULT         16883548
 #define RL_COMPRESS_TEST_FIND_TIME_DEFAULT    16883550
@@ -384,6 +385,8 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     uint8_t * p_block = (uint8_t *) &block[0];
     size_t c_size = 0;
     float ratio = 0;
+    // Always have same random data series
+    srand(1);
     ret_type_t lib_status = RL_COMPRESS_SUCCESS;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_TIME_DEFAULT;
     memset (htab, 0, sizeof (htab));
@@ -399,6 +402,9 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
         {
             // Simulate change in sensor data.
             test_data.time++;
+            test_data.payload[RL_COMPRESS_TEST_TEMP_NUM] += (float)((rand()%100)/100.0F)-0.5F;
+            test_data.payload[RL_COMPRESS_TEST_HUM_NUM] += (float)((rand()%100)/100.0F)-0.5F;
+            test_data.payload[RL_COMPRESS_TEST_PRESSURE_NUM] += (float)((rand()%100)/100.0F)-0.5F;
             counter += sizeof (test_data);
         }
         // Compress lib returns other status code if no new uncompressed data can
