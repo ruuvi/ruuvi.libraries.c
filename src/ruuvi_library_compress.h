@@ -22,18 +22,31 @@
 #define RL_COMPRESS_ERROR_INVALID_PARAM    (1U<<4U)   ///< Invalid Parameter
 #define RL_COMPRESS_ERROR_INVALID_STATE    (1U<<5U)   ///< Invalid state, operation disallowed in this state
 #define RL_COMPRESS_ERROR_NULL             (1U<<11U)  ///< Null Pointer
+#define RL_COMPRESS_ERROR_INTERNAL         (1U<<12U)  ///< Algorithm error
+#define RL_COMPRESS_ERROR_NOT_FOUND        (1U<<13U)  ///< No matching data found.
 #define RL_COMPRESS_END                    (1U<<22U)  ///< Compress/Decompress ended
 #define RL_COMPRESS_LIMIT_REACHED          (1U<<23U)  ///< Maximum compression limit reached.
 #define RL_COMPRESS_OUT2BIG                (1U<<24U)  ///< Compressed data is larger than input. Store uncompressed data. 
+#define RL_COMPRESS_START                  (1U<<25U)  ///< Start de/compress operation
+#define RL_COMPRESS_DECOMPRESS_DONE        (1U<<26U)  ///< Data is decompressed.
 
 #define RL_COMPRESS_STATE_SIZE             (1U << (HLOG)) //!< hashtable size.
 #define RL_COMPRESS_COMPRESS_SIZE          (4000U)        //!< Flash page is 4096 bytes, leave space for headers.
-#define RL_COMPRESS_DECOMPRESS_SIZE        (2U * RL_COMPRESS_COMPRESS_SIZE) //!< Maximum uncompressed data.
+/**
+ * @brief Maximum compression ratio is COMPRESS_SIZE/DECOMPRESS_SIZE, but increases RAM usage. 
+ */
+#define RL_COMPRESS_DECOMPRESS_SIZE        (3U * RL_COMPRESS_COMPRESS_SIZE) 
 #define RL_COMPRESS_FIELD_NUM              (3U) //!< Number of fields to compress
+/**
+ * Compression overhead allows small percentage of wasted space in block. 
+ * Minimum should be 4 % of RL_COMPRESS_COMPRESS_SIZE to allow for incompressible data-
+ * Larger values reduce algorithm reruns, but spend more space.
+ */
+#define RL_COMPRESS_OVERHEAD               (RL_COMPRESS_COMPRESS_SIZE / 20U) 
 
 typedef uint32_t timestamp_t;
 typedef uint32_t ret_type_t;///< bitfield for representing errors
-typedef LZF_HSLOT rl_compress_state_t[RL_COMPRESS_STATE_SIZE];
+typedef LZF_HSLOT rl_compress_algo_state_t[RL_COMPRESS_STATE_SIZE];
 
 #pragma pack(push, 1)
 typedef struct
@@ -44,11 +57,13 @@ typedef struct
 
 typedef struct
 {
-    LZF_HSLOT algo_state; //!< Hashtable, memset to 0 to reset. 4 kB
+    rl_compress_algo_state_t algo_state; //!< Hashtable, memset to 0 to reset. 4 kB
     uint8_t compress_block[RL_COMPRESS_COMPRESS_SIZE]; // Compressed block, 4 kB
-    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block, 8 kB
+    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block, 12 kB
     size_t compressed_size;   //!< Number of compressed bytes in compress block.
     size_t decompressed_size; //!< Number of uncompressed bytes in decompress block.
+    size_t next_decompression; //!< Counter for number of decompressed bytes before trying next decompression.
+    rl_data_t* next_sample;   //!< Pointer to next sample in decompression.
     ret_type_t compress_state; //!< State of compression.
 }rl_compress_state_t;
 #pragma pack(pop)
@@ -65,10 +80,10 @@ typedef struct
  * @return status code indicating if compression was successful.
  *
  */
-ret_type_t rl_compress (rl_data_t * data,
-                        uint8_t * block,
-                        size_t block_size,
-                        rl_compress_state_t * state);
+ret_type_t rl_compress (rl_data_t * const data,
+                        uint8_t * const block,
+                        const size_t block_size,
+                        rl_compress_state_t * const state);
 /**
  * @brief Ruuvi Library decompress function.
  * Looks up next sample after given timestamp and returns it via output parameter.
