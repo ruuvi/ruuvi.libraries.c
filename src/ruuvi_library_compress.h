@@ -39,7 +39,7 @@
 #define RL_COMPRESS_FIELD_NUM              (3U) //!< Number of fields to compress
 /**
  * Compression overhead allows small percentage of wasted space in block. 
- * Minimum should be 4 % of RL_COMPRESS_COMPRESS_SIZE to allow for incompressible data-
+ * Minimum should be 4 % of RL_COMPRESS_COMPRESS_SIZE to allow for incompressible data.
  * Larger values reduce algorithm reruns, but spend more space.
  */
 #define RL_COMPRESS_OVERHEAD               (RL_COMPRESS_COMPRESS_SIZE / 20U) 
@@ -87,7 +87,6 @@ ret_type_t rl_compress (rl_data_t * const data,
 /**
  * @brief Ruuvi Library decompress function.
  * Looks up next sample after given timestamp and returns it via output parameter.
- *
  *
  * @param[out] data Next sample from block. Not modified if no data was found in block.
  * @param[in]  block Pointer to compressed buffer with sensor data.
