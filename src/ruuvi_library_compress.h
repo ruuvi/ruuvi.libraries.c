@@ -33,16 +33,16 @@
 #define RL_COMPRESS_STATE_SIZE             (1U << (HLOG)) //!< hashtable size.
 #define RL_COMPRESS_COMPRESS_SIZE          (4000U)        //!< Flash page is 4096 bytes, leave space for headers.
 /**
- * @brief Maximum compression ratio is COMPRESS_SIZE/DECOMPRESS_SIZE, but increases RAM usage. 
+ * @brief Maximum compression ratio is COMPRESS_SIZE/DECOMPRESS_SIZE, but increases RAM usage.
  */
-#define RL_COMPRESS_DECOMPRESS_SIZE        (3U * RL_COMPRESS_COMPRESS_SIZE) 
+#define RL_COMPRESS_DECOMPRESS_SIZE        (3U * RL_COMPRESS_COMPRESS_SIZE)
 #define RL_COMPRESS_FIELD_NUM              (3U) //!< Number of fields to compress
 /**
- * Compression overhead allows small percentage of wasted space in block. 
+ * Compression overhead allows small percentage of wasted space in block.
  * Minimum should be 4 % of RL_COMPRESS_COMPRESS_SIZE to allow for incompressible data.
  * Larger values reduce algorithm reruns, but spend more space.
  */
-#define RL_COMPRESS_OVERHEAD               (RL_COMPRESS_COMPRESS_SIZE / 20U) 
+#define RL_COMPRESS_OVERHEAD               (RL_COMPRESS_COMPRESS_SIZE / 20U)
 
 typedef uint32_t timestamp_t;
 typedef uint32_t ret_type_t;///< bitfield for representing errors
@@ -63,9 +63,9 @@ typedef struct
     size_t compressed_size;   //!< Number of compressed bytes in compress block.
     size_t decompressed_size; //!< Number of uncompressed bytes in decompress block.
     size_t next_decompression; //!< Counter for number of decompressed bytes before trying next decompression.
-    rl_data_t* next_sample;   //!< Pointer to next sample in decompression.
+    rl_data_t * next_sample;  //!< Pointer to next sample in decompression.
     ret_type_t compress_state; //!< State of compression.
-}rl_compress_state_t;
+} rl_compress_state_t;
 #pragma pack(pop)
 
 /**
