@@ -18,7 +18,7 @@
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
- * Try to do compess/decompress operation over library API.
+ * Try to do compress/decompress operation over library API.
  *
  * @return true if test is valid, false if else.
  */
@@ -26,7 +26,7 @@ bool ruuvi_library_test_compress_decompress (void);
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
- * Try to do compess/decompress operation 2 times over library API.
+ * Try to do compress/decompress operation 2 times over library API.
  *
  * @return true if test is valid, false if else.
  */
