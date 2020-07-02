@@ -48,10 +48,10 @@ static ret_type_t ruuvi_library_test_decompress (rl_data_t * p_find_data,
 {
     ret_type_t result;
     rl_data_t decompress_result;
-    memset (&decompress_result, 0, sizeof(decompress_result));
-    result = rl_decompress ( &decompress_result,
-                             p_block, RL_COMPRESS_DECOMPRESS_SIZE,
-                             &htab, p_start_timestamp);
+    memset (&decompress_result, 0, sizeof (decompress_result));
+    result = rl_decompress (&decompress_result,
+                            p_block, RL_COMPRESS_DECOMPRESS_SIZE,
+                            &htab, p_start_timestamp);
 
     if (RL_COMPRESS_SUCCESS == result)
     {
@@ -72,7 +72,7 @@ static ret_type_t ruuvi_library_test_decompress (rl_data_t * p_find_data,
         }
 
 #endif
-        memset (&decompress_result, 0, sizeof(decompress_result));
+        memset (&decompress_result, 0, sizeof (decompress_result));
     }
 
     return result;
@@ -85,10 +85,10 @@ static bool ruuvi_library_test_decompress_all (uint8_t * p_block,
     bool result = false;
     ret_type_t res = RL_COMPRESS_SUCCESS;
     find_data.time = RL_COMPRESS_TEST_TIME_DEFAULT;
-    // Clear out the decompressed data. 
+    // Clear out the decompressed data.
     // Sanitycheck: Size of decompressed data must not have changed.
     size_t original_size = htab.decompressed_size;
-    memset(htab.decompress_block, 0, RL_COMPRESS_DECOMPRESS_SIZE);
+    memset (htab.decompress_block, 0, RL_COMPRESS_DECOMPRESS_SIZE);
     htab.decompressed_size = 0;
     htab.compress_state = RL_COMPRESS_START;
 
@@ -110,7 +110,8 @@ static bool ruuvi_library_test_decompress_all (uint8_t * p_block,
             break;
         }
     }
-    if(htab.decompressed_size != original_size)
+
+    if (htab.decompressed_size != original_size)
     {
         result = false;
     }
@@ -125,14 +126,14 @@ static bool ruuvi_library_test_compress (uint16_t start_offset,
     bool result =  true;
     ret_type_t lib_status = RL_COMPRESS_SUCCESS;
 
-    while(RL_COMPRESS_SUCCESS == lib_status)
+    while (RL_COMPRESS_SUCCESS == lib_status)
     {
         lib_status = rl_compress (p_test_data, p_block,
-                                                RL_COMPRESS_COMPRESS_SIZE, &htab);
-            p_test_data->time++;
-        
+                                  RL_COMPRESS_COMPRESS_SIZE, &htab);
+        p_test_data->time++;
+
         // If other status code than success or done
-        if(lib_status & ~(RL_COMPRESS_SUCCESS | RL_COMPRESS_END))
+        if (lib_status & ~ (RL_COMPRESS_SUCCESS | RL_COMPRESS_END))
         {
             result = false;
         }
@@ -149,23 +150,13 @@ static bool ruuvi_library_test_invalid_state()
     htab.compress_state = RL_COMPRESS_END;
     timestamp_t start_timestamp = 0;
 
-        if (RL_COMPRESS_ERROR_INVALID_STATE != rl_decompress (&decompress_result,
-                htab.compress_block,
-                htab.compressed_size,
-                &htab, &start_timestamp))
-        {
-            result = false;
-        }
-
-    return result;
-}
-
-static bool ruuvi_library_test_invalid_param()
-{
-    bool result = true;
-    timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-
-    // TODO
+    if (RL_COMPRESS_ERROR_INVALID_STATE != rl_decompress (&decompress_result,
+            htab.compress_block,
+            htab.compressed_size,
+            &htab, &start_timestamp))
+    {
+        result = false;
+    }
 
     return result;
 }
@@ -175,7 +166,6 @@ static bool ruuvi_library_test_null()
     bool result = true;
     uint8_t block[RL_COMPRESS_COMPRESS_SIZE];
     timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-    size_t compessed_size;
 
     if (RL_COMPRESS_ERROR_NULL != rl_compress (NULL, block,
             RL_COMPRESS_COMPRESS_SIZE, &htab))
@@ -267,6 +257,7 @@ bool ruuvi_library_test_compress_decompress_2_times()
         {
             result = false;
         }
+
         if (false == ruuvi_library_test_decompress_all (htab.compress_block, &start_timestamp,
                 RL_COMPRESS_COMPRESS_SIZE))
         {
@@ -284,10 +275,9 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
 {
     bool result =  true;
     uint16_t counter = 0; //!< Number of bytes compressed
-    size_t c_size = 0;
     float ratio = 0;
     // Always have same random data series
-    srand(1);
+    srand (1);
     ret_type_t lib_status = RL_COMPRESS_SUCCESS;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_TIME_DEFAULT;
     memset (&htab, 0, sizeof (htab));
@@ -297,22 +287,23 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     {
         // Try to append uncompressed data to block.
         // rl_compress returns RL_COMPRESS_SUCCESS if data was appended
-        lib_status = rl_compress (&test_data, htab.compress_block, RL_COMPRESS_COMPRESS_SIZE, &htab);
+        lib_status = rl_compress (&test_data, htab.compress_block, RL_COMPRESS_COMPRESS_SIZE,
+                                  &htab);
 
         if (RL_COMPRESS_SUCCESS == lib_status)
         {
             // Simulate change in sensor data.
             test_data.time++;
-            test_data.payload[RL_COMPRESS_TEST_TEMP_NUM] += (float)((rand()%100)/50.0F)-0.5F;
-            test_data.payload[RL_COMPRESS_TEST_HUM_NUM] += (float)((rand()%100)/50.0F)-0.5F;
-            test_data.payload[RL_COMPRESS_TEST_PRESSURE_NUM] += (float)((rand()%100)/50.0F)-0.5F;
+            test_data.payload[RL_COMPRESS_TEST_TEMP_NUM] += (float) ( (rand() % 100) / 50.0F) - 0.5F;
+            test_data.payload[RL_COMPRESS_TEST_HUM_NUM] += (float) ( (rand() % 100) / 50.0F) - 0.5F;
+            test_data.payload[RL_COMPRESS_TEST_PRESSURE_NUM] += (float) ( (
+                        rand() % 100) / 50.0F) - 0.5F;
             counter += sizeof (test_data);
         }
         // Compress lib returns other status code if no new uncompressed data can
         // be appended and data was compressed in place instead.
         else if (lib_status == RL_COMPRESS_END)
         {
-
         }
         // If compression failed while space was remaining, stop test as a failure.
         else
@@ -326,11 +317,10 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     {
         start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
         c_size = 0;
-
-            ratio = (float) htab.compressed_size / (float) counter;
-            char msg[128] = {0};
-            snprintf (msg, sizeof (msg), "\"compress_ratio:\"\"%02.02f\%\",\r\n", ratio);
-            printfp (msg);
+        ratio = (float) htab.compressed_size / (float) counter;
+        char msg[128] = {0};
+        snprintf (msg, sizeof (msg), "\"compress_ratio:\"\"%02.02f%%\",\r\n", ratio);
+        printfp (msg);
 
         if (false == ruuvi_library_test_decompress_all (htab.compress_block, &start_timestamp,
                 RL_COMPRESS_COMPRESS_SIZE))
@@ -349,11 +339,6 @@ bool ruuvi_library_test_invalid_input()
     bool result = true;
 
     if (false == ruuvi_library_test_null())
-    {
-        result = false;
-    }
-
-    if (false == ruuvi_library_test_invalid_param())
     {
         result = false;
     }
