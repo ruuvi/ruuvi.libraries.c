@@ -316,7 +316,6 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     if (true == result)
     {
         start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-        c_size = 0;
         ratio = (float) htab.compressed_size / (float) counter;
         char msg[128] = {0};
         snprintf (msg, sizeof (msg), "\"compress_ratio:\"\"%02.02f%%\",\r\n", ratio);
