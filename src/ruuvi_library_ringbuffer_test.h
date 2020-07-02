@@ -4,25 +4,25 @@
  * @file ruuvi_library_ringbuffer_test.h
  * @author Otso Jousimaa
  * @date 2019-07-22
- * @brief Function for testing library functions. 
+ * @brief Function for testing library functions.
  * @copyright Copyright 2019 Ruuvi Innovations.
  *   This project is released under the BSD-3-Clause License.
  *
- * Run tests for library functions. 
+ * Run tests for library functions.
  */
 
 #include <stdbool.h>
 #include <stdint.h>
 
 /**
- * @ingroup test_library 
+ * @ingroup test_library
  * @defgroup test_datastructures Data structure tests
  *  Functions to test data structures for correctness.
  *  @{
  */
 
 /** Dummy function to lock/unlock buffer */
-bool ruuvi_library_test_ringbuffer_lock_dummy(volatile uint32_t* const flag, bool lock);
+bool ruuvi_library_test_ringbuffer_lock_dummy (volatile uint32_t * const flag, bool lock);
 
 /**
  * Test that data can be queued and dequeued to/from buffer
