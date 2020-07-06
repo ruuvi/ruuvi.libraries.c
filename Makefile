@@ -236,7 +236,7 @@ VERSION := $(if $(TAG),$(TAG),$(COMMIT))
 
 .PHONY: clean doxygen
 
-all: clean doxygen pvs sonar astyle
+all: clean doxygen pvs astyle
 
 pvs: $(SOURCES) $(EXECUTABLE) 
 
@@ -259,10 +259,6 @@ clean:
 	rm -rf $(DOXYGEN_DIR)/latex
 	rm -f *.gcov
 
-sonar: 	
-	clean $(SOURCES) $(SONAR) 
-	$(SONAR): $(ANALYSIS)
-
 doxygen:
 	export PROJECT_VERSION=$(VERSION) 
 	doxygen
@@ -270,4 +266,5 @@ doxygen:
 astyle:
 	astyle --project=".astylerc" --recursive \
 			  "src/*.h" \
-			  "src/*.c"  	
+			  "src/*.c" \
+			  "test/*.c"
