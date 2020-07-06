@@ -8,6 +8,13 @@ Libraries to be run on embedded devices.
 ## 0.2.0
  - Add liblzf compression
 
+## 0.1.4
+ - Support Ceedling
+ - Support Astyle, check Astyle in GitHub Actions
+ - Support SonarCloud, code coverage analysis
+ - Support Doxygen
+ - Support PVS Studio
+
 ## 0.1.3
  - rename semver string to RUUVI_LIBRARIES_SEMVER
 
