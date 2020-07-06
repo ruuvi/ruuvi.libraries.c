@@ -1,9 +1,9 @@
 #include "ruuvi_library_enabled_modules.h"
 #if RL_INTEGRATION_TEST_ENABLED
-#include "analysis/ruuvi_library_test_analysis.h"
-#include "analysis/ruuvi_library_peak2peak.h"
-#include "analysis/ruuvi_library_rms.h"
-#include "analysis/ruuvi_library_variance.h"
+#include "ruuvi_library_test_analysis.h"
+#include "ruuvi_library_peak2peak.h"
+#include "ruuvi_library_rms.h"
+#include "ruuvi_library_variance.h"
 #include "ruuvi_library_test.h"
 #include <math.h>
 
@@ -98,7 +98,7 @@ bool ruuvi_library_test_variance_overflow (void)
 {
     float vector[] = RLT_VARIANCE_OVERFLOW_VECTOR;
     float variance = 0;
-    variance = ruuvi_library_variance (vector, sizeof (vector) / sizeof (float));
+    variance = ruuvi_library_variance (vector, sizeof (vector) / sizeof (vector[0]));
     return isnan (variance);
 }
 

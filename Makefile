@@ -231,6 +231,7 @@ SONAR=ruuvilib-analysis
 TAG := $(shell git describe --tags --exact-match)
 # Commit hash from git
 COMMIT := $(shell git rev-parse --short HEAD)
+
 VERSION := $(if $(TAG),$(TAG),$(COMMIT))
 
 .PHONY: clean doxygen
