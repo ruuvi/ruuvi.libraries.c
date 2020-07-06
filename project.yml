@@ -102,9 +102,11 @@
       :*:
         - -Wall
         - -std=c11
+        - -lm
   :gcov:
     :compile:
       :*:
         - -Wall
         - -std=c11
+        - -lm
 ...
