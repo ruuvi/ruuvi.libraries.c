@@ -40,6 +40,10 @@
       - -lm                           #link with math header
       - -o ${2}                       #executable file output (Ruby method call param list sub)
 
+:tools_gcov_linker:
+  :arguments:
+    - -lm
+
 :paths:
   :test:
     - +:test/**
