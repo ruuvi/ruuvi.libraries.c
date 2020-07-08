@@ -206,6 +206,8 @@
 CXX=gcc
 
 PROJ_DIR := src
+PROJ_LIBS_DIR := $(PROJ_DIR)/libs
+PROJ_INTEGRATION_TESTS_DIR := $(PROJ_DIR)/integration_tests
 include gcc_sources.make
 
 PVS_CFG=./PVS-Studio.cfg
