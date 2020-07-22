@@ -83,7 +83,7 @@ bool rl_test_variance_ok (void)
     float variance = 0;
     variance = rl_variance (vector, sizeof (vector) / sizeof (float));
     return rl_expect_close (RLT_VARIANCE_OK_EXPECT, RLT_VARIANCE_OK_DECIMALS,
-                                       variance);
+                            variance);
 }
 
 bool rl_test_variance_nan (void)

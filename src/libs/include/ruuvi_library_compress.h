@@ -71,24 +71,24 @@ typedef struct
 /**
  * @brief Ruuvi Library compress function.
  * Takes a sensor data sample in and appends it to given data block.
- * 
- * It is assumed that data is appended in linear order, 
+ *
+ * It is assumed that data is appended in linear order,
  * new sample has always greater timestamp than previous.
  *
  * @param[in] data Sensor data to compress, 1 sample.
- * @param[out] block Pointer to buffer to which compressed data is placed. 
+ * @param[out] block Pointer to buffer to which compressed data is placed.
  * @param[in] block_size Size of block.
- * @param[in,out] state In: State of compression algorithm before adding latest data. 
+ * @param[in,out] state In: State of compression algorithm before adding latest data.
  *                      Out: State of compression algorithm after adding latest data.
  * @retval RL_SUCCESS If compression was successful.
  * @retval RL_ERROR_NULL If given a NULL as a parameter.
  * @retval RL_COMPRESS_END If the block is considered full.
  *                         Block is ready to be stored to non-volatile memory.
  * @retval RL_COMPRESS_OUT2BIG If compressed data is larger than uncompressed data.
- *                             In this case uncompressed data should be stored, 
- *                             compressed data may be invalid if it doesn't fit 
+ *                             In this case uncompressed data should be stored,
+ *                             compressed data may be invalid if it doesn't fit
  *                             into block.
- *                             
+ *
  *
  */
 ret_type_t rl_compress (const rl_data_t * const data,

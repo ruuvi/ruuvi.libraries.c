@@ -4,9 +4,9 @@
 
 
 rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const
-        buffer,
-        const void * const data,
-        const size_t data_length)
+                                 buffer,
+                                 const void * const data,
+                                 const size_t data_length)
 {
     if (NULL == buffer || NULL == data)         { return RL_ERROR_NULL; }
 
@@ -26,8 +26,8 @@ rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const
 }
 
 rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t *
-        const buffer,
-        const void * data)
+                                   const buffer,
+                                   const void * data)
 {
     if (NULL == buffer || NULL == data)         { return RL_ERROR_NULL; }
 
@@ -45,8 +45,8 @@ rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t *
 }
 
 rl_status_t rl_ringbuffer_peek (rl_ringbuffer_t * const
-        buffer,
-        const void * data, const size_t index)
+                                buffer,
+                                const void * data, const size_t index)
 {
     if (NULL == buffer || NULL == data)         { return RL_ERROR_NULL; }
 

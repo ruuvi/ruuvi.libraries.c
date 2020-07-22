@@ -16,7 +16,7 @@
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
 static void rl_test_peak2peak (uint32_t * const total_tests,
-        uint32_t * const passed, const rl_test_print_fp printfp)
+                               uint32_t * const passed, const rl_test_print_fp printfp)
 {
     bool pass = false;
     printfp ("\"peak2peak\":{\r\n");
@@ -52,7 +52,7 @@ static void rl_test_peak2peak (uint32_t * const total_tests,
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
 static void rl_test_rms (uint32_t * const total_tests, uint32_t * const passed,
-                                    const rl_test_print_fp printfp)
+                         const rl_test_print_fp printfp)
 {
     bool pass = false;
     printfp ("\"rms\":{\r\n");
@@ -88,7 +88,7 @@ static void rl_test_rms (uint32_t * const total_tests, uint32_t * const passed,
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
 static void rl_test_variance (uint32_t * const total_tests,
-        uint32_t * const passed, const rl_test_print_fp printfp)
+                              uint32_t * const passed, const rl_test_print_fp printfp)
 {
     bool pass = false;
     printfp ("\"variance\":{\r\n");
@@ -124,7 +124,7 @@ static void rl_test_variance (uint32_t * const total_tests,
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
 static void rl_test_ringbuffer (uint32_t * const total_tests,
-        uint32_t * const passed, const rl_test_print_fp printfp)
+                                uint32_t * const passed, const rl_test_print_fp printfp)
 {
     bool pass = false;
     printfp ("\"ringbuffer\":{\r\n");
@@ -153,7 +153,7 @@ static void rl_test_ringbuffer (uint32_t * const total_tests,
  * @param[in, out] passed Total number of tests which have passed. Gets incremented.
  */
 static void rl_test_compress (uint32_t * const total_tests,
-        uint32_t * const passed, const rl_test_print_fp printfp)
+                              uint32_t * const passed, const rl_test_print_fp printfp)
 {
     bool pass = false;
     printfp ("\"liblzf\":{\r\n");
@@ -202,7 +202,7 @@ bool rl_test_all_run (const rl_test_print_fp printfp)
 }
 
 bool rl_expect_close (const float expect, const int8_t precision,
-                                 const float check)
+                      const float check)
 {
     if (!isfinite (expect) || !isfinite (check)) { return false; }
 

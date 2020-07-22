@@ -50,7 +50,7 @@ bool rl_test_all_run (const rl_test_print_fp printfp);
  *
  */
 bool rl_expect_close (const float expect, const int8_t precision,
-                                 const float check);
+                      const float check);
 
 
 

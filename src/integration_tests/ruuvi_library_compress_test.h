@@ -39,7 +39,7 @@ bool rl_test_compress_decompress_2_times (void);
  * @return true if test is valid, false if else.
  */
 bool rl_test_compress_decompress_ratio (const rl_test_print_fp
-        printfp);
+                                        printfp);
 
 /**
  * @brief Ruuvi Library test compress/decompress function.

@@ -43,8 +43,8 @@ static rl_data_t find_data =
 extern rl_compress_state_t m_compress_state;
 
 static ret_type_t rl_test_decompress (rl_data_t * p_find_data,
-        uint8_t * p_block,
-        timestamp_t * p_start_timestamp)
+                                      uint8_t * p_block,
+                                      timestamp_t * p_start_timestamp)
 {
     ret_type_t result;
     rl_data_t decompress_result;
@@ -59,7 +59,7 @@ static ret_type_t rl_test_decompress (rl_data_t * p_find_data,
 
         if (0 != memcmp (p_find_data,
                          &decompress_result,
-                         sizeof(decompress_result)))
+                         sizeof (decompress_result)))
         {
             result = RL_COMPRESS_ERROR_INVALID_STATE;
         }
@@ -79,8 +79,8 @@ static ret_type_t rl_test_decompress (rl_data_t * p_find_data,
 }
 
 static bool rl_test_decompress_all (uint8_t * p_block,
-        timestamp_t * p_start_timestamp,
-        uint16_t block_size)
+                                    timestamp_t * p_start_timestamp,
+                                    uint16_t block_size)
 {
     bool result = false;
     ret_type_t res = RL_COMPRESS_SUCCESS;
@@ -120,8 +120,8 @@ static bool rl_test_decompress_all (uint8_t * p_block,
 }
 
 static bool rl_test_compress (uint16_t start_offset,
-        rl_data_t * p_test_data,
-        uint8_t * p_block)
+                              rl_data_t * p_test_data,
+                              uint8_t * p_block)
 {
     bool result =  true;
     ret_type_t lib_status = RL_COMPRESS_SUCCESS;
@@ -229,7 +229,7 @@ bool rl_test_compress_decompress()
     else
     {
         if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
-                RL_COMPRESS_COMPRESS_SIZE))
+                                             RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
         }
@@ -253,13 +253,13 @@ bool rl_test_compress_decompress_2_times()
     else
     {
         if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
-                RL_COMPRESS_COMPRESS_SIZE))
+                                             RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
         }
 
         if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
-                RL_COMPRESS_COMPRESS_SIZE))
+                                             RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
         }
@@ -271,7 +271,7 @@ bool rl_test_compress_decompress_2_times()
 }
 
 bool rl_test_compress_decompress_ratio (const rl_test_print_fp
-        printfp)
+                                        printfp)
 {
     bool result =  true;
     uint16_t counter = 0; //!< Number of bytes compressed
@@ -287,7 +287,8 @@ bool rl_test_compress_decompress_ratio (const rl_test_print_fp
     {
         // Try to append uncompressed data to block.
         // rl_compress returns RL_COMPRESS_SUCCESS if data was appended
-        lib_status = rl_compress (&test_data, m_compress_state.compress_block, RL_COMPRESS_COMPRESS_SIZE,
+        lib_status = rl_compress (&test_data, m_compress_state.compress_block,
+                                  RL_COMPRESS_COMPRESS_SIZE,
                                   &m_compress_state);
 
         if (RL_COMPRESS_SUCCESS == lib_status)
@@ -322,7 +323,7 @@ bool rl_test_compress_decompress_ratio (const rl_test_print_fp
         printfp (msg);
 
         if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
-                RL_COMPRESS_COMPRESS_SIZE))
+                                             RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
         }

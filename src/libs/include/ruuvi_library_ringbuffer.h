@@ -44,7 +44,7 @@
  * @return    true if operation was successful
  */
 typedef bool (*rl_atomic_flag) (volatile uint32_t * const flag,
-        const bool set);
+                                const bool set);
 
 /* @brief Struct definition for ringbuffer.
  *
@@ -97,8 +97,8 @@ typedef struct
  * @return    RL_ERROR_DATA_LENGTH if data is bigger than buffer block size.
  */
 rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const buffer,
-        const void * const data,
-        const size_t data_length);
+                                 const void * const data,
+                                 const size_t data_length);
 
 /**
  * @brief Dequeue data from ringbuffer
@@ -117,8 +117,8 @@ rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const buffer,
  * @warning       Data returned by this function can be overwritten, take a deep copy if required.
  */
 rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t *
-        const buffer,
-        const void * data);
+                                   const buffer,
+                                   const void * data);
 
 /**
  * @brief Peek data in ringbuffer
@@ -137,8 +137,8 @@ rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t *
  * @warning       Data returned by this function can be overwritten, take a deep copy if required.
  */
 rl_status_t rl_ringbuffer_peek (rl_ringbuffer_t * const
-        buffer,
-        const void * data, const size_t index);
+                                buffer,
+                                const void * data, const size_t index);
 
 /*
  * return true if rinbuffer is full
