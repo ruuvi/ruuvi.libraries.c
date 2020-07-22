@@ -40,9 +40,9 @@ static rl_data_t find_data =
     RL_COMPRESS_TEST_PRESSURE_DEFAULT,
 };
 
-static rl_compress_state_t htab;
+extern rl_compress_state_t m_compress_state;
 
-static ret_type_t ruuvi_library_test_decompress (rl_data_t * p_find_data,
+static ret_type_t rl_test_decompress (rl_data_t * p_find_data,
         uint8_t * p_block,
         timestamp_t * p_start_timestamp)
 {
@@ -51,7 +51,7 @@ static ret_type_t ruuvi_library_test_decompress (rl_data_t * p_find_data,
     memset (&decompress_result, 0, sizeof (decompress_result));
     result = rl_decompress (&decompress_result,
                             p_block, RL_COMPRESS_DECOMPRESS_SIZE,
-                            &htab, p_start_timestamp);
+                            &m_compress_state, p_start_timestamp);
 
     if (RL_COMPRESS_SUCCESS == result)
     {
@@ -59,7 +59,7 @@ static ret_type_t ruuvi_library_test_decompress (rl_data_t * p_find_data,
 
         if (0 != memcmp (p_find_data,
                          &decompress_result,
-                         RL_COMPRESS_TEST_DATA_SIZE_DEFAULT))
+                         sizeof(decompress_result)))
         {
             result = RL_COMPRESS_ERROR_INVALID_STATE;
         }
@@ -78,7 +78,7 @@ static ret_type_t ruuvi_library_test_decompress (rl_data_t * p_find_data,
     return result;
 }
 
-static bool ruuvi_library_test_decompress_all (uint8_t * p_block,
+static bool rl_test_decompress_all (uint8_t * p_block,
         timestamp_t * p_start_timestamp,
         uint16_t block_size)
 {
@@ -87,14 +87,14 @@ static bool ruuvi_library_test_decompress_all (uint8_t * p_block,
     find_data.time = RL_COMPRESS_TEST_TIME_DEFAULT;
     // Clear out the decompressed data.
     // Sanitycheck: Size of decompressed data must not have changed.
-    size_t original_size = htab.decompressed_size;
-    memset (htab.decompress_block, 0, RL_COMPRESS_DECOMPRESS_SIZE);
-    htab.decompressed_size = 0;
-    htab.compress_state = RL_COMPRESS_START;
+    size_t original_size = m_compress_state.decompressed_size;
+    memset (m_compress_state.decompress_block, 0, RL_COMPRESS_DECOMPRESS_SIZE);
+    m_compress_state.decompressed_size = 0;
+    m_compress_state.compress_state = RL_COMPRESS_START;
 
     while (res != RL_COMPRESS_END)
     {
-        res = ruuvi_library_test_decompress (&find_data, p_block, p_start_timestamp);
+        res = rl_test_decompress (&find_data, p_block, p_start_timestamp);
 
         if (RL_COMPRESS_END == res)
         {
@@ -111,7 +111,7 @@ static bool ruuvi_library_test_decompress_all (uint8_t * p_block,
         }
     }
 
-    if (htab.decompressed_size != original_size)
+    if (m_compress_state.decompressed_size != original_size)
     {
         result = false;
     }
@@ -119,7 +119,7 @@ static bool ruuvi_library_test_decompress_all (uint8_t * p_block,
     return result;
 }
 
-static bool ruuvi_library_test_compress (uint16_t start_offset,
+static bool rl_test_compress (uint16_t start_offset,
         rl_data_t * p_test_data,
         uint8_t * p_block)
 {
@@ -129,7 +129,7 @@ static bool ruuvi_library_test_compress (uint16_t start_offset,
     while (RL_COMPRESS_SUCCESS == lib_status)
     {
         lib_status = rl_compress (p_test_data, p_block,
-                                  RL_COMPRESS_COMPRESS_SIZE, &htab);
+                                  RL_COMPRESS_COMPRESS_SIZE, &m_compress_state);
         p_test_data->time++;
 
         // If other status code than success or done
@@ -142,18 +142,18 @@ static bool ruuvi_library_test_compress (uint16_t start_offset,
     return result;
 }
 
-static bool ruuvi_library_test_invalid_state()
+static bool rl_test_invalid_state()
 {
     bool result =  true;
     rl_data_t decompress_result;
-    memset (&htab, 0, sizeof (htab));
-    htab.compress_state = RL_COMPRESS_END;
+    memset (&m_compress_state, 0, sizeof (m_compress_state));
+    m_compress_state.compress_state = RL_COMPRESS_END;
     timestamp_t start_timestamp = 0;
 
     if (RL_COMPRESS_ERROR_INVALID_STATE != rl_decompress (&decompress_result,
-            htab.compress_block,
-            htab.compressed_size,
-            &htab, &start_timestamp))
+            m_compress_state.compress_block,
+            m_compress_state.compressed_size,
+            &m_compress_state, &start_timestamp))
     {
         result = false;
     }
@@ -161,20 +161,20 @@ static bool ruuvi_library_test_invalid_state()
     return result;
 }
 
-static bool ruuvi_library_test_null()
+static bool rl_test_null()
 {
     bool result = true;
     uint8_t block[RL_COMPRESS_COMPRESS_SIZE];
     timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
 
     if (RL_COMPRESS_ERROR_NULL != rl_compress (NULL, block,
-            RL_COMPRESS_COMPRESS_SIZE, &htab))
+            RL_COMPRESS_COMPRESS_SIZE, &m_compress_state))
     {
         result = false;
     }
 
     if (RL_COMPRESS_ERROR_NULL != rl_compress (&test_data, NULL,
-            RL_COMPRESS_COMPRESS_SIZE, &htab))
+            RL_COMPRESS_COMPRESS_SIZE, &m_compress_state))
     {
         result = false;
     }
@@ -187,14 +187,14 @@ static bool ruuvi_library_test_null()
 
     if (RL_COMPRESS_ERROR_NULL != rl_decompress (NULL, block,
             RL_COMPRESS_COMPRESS_SIZE,
-            &htab, &start_timestamp))
+            &m_compress_state, &start_timestamp))
     {
         result = false;
     }
 
     if (RL_COMPRESS_ERROR_NULL != rl_decompress (&find_data, NULL,
             RL_COMPRESS_COMPRESS_SIZE,
-            &htab, &start_timestamp))
+            &m_compress_state, &start_timestamp))
     {
         result = false;
     }
@@ -208,7 +208,7 @@ static bool ruuvi_library_test_null()
 
     if (RL_COMPRESS_ERROR_NULL != rl_decompress (&test_data, (uint8_t *) &block,
             RL_COMPRESS_COMPRESS_SIZE,
-            &htab, NULL))
+            &m_compress_state, NULL))
     {
         result = false;
     }
@@ -216,19 +216,19 @@ static bool ruuvi_library_test_null()
     return result;
 }
 
-bool ruuvi_library_test_compress_decompress()
+bool rl_test_compress_decompress()
 {
     bool result =  true;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-    memset (&htab, 0, sizeof (htab));
+    memset (&m_compress_state, 0, sizeof (m_compress_state));
 
-    if (false == ruuvi_library_test_compress (0, &test_data, htab.compress_block))
+    if (false == rl_test_compress (0, &test_data, m_compress_state.compress_block))
     {
         result = false;
     }
     else
     {
-        if (false == ruuvi_library_test_decompress_all (htab.compress_block, &start_timestamp,
+        if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
                 RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
@@ -240,25 +240,25 @@ bool ruuvi_library_test_compress_decompress()
     return result;
 }
 
-bool ruuvi_library_test_compress_decompress_2_times()
+bool rl_test_compress_decompress_2_times()
 {
     bool result =  true;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-    memset (&htab, 0, sizeof (htab));
+    memset (&m_compress_state, 0, sizeof (m_compress_state));
 
-    if (false == ruuvi_library_test_compress (0, &test_data, htab.compress_block))
+    if (false == rl_test_compress (0, &test_data, m_compress_state.compress_block))
     {
         result = false;
     }
     else
     {
-        if (false == ruuvi_library_test_decompress_all (htab.compress_block, &start_timestamp,
+        if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
                 RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
         }
 
-        if (false == ruuvi_library_test_decompress_all (htab.compress_block, &start_timestamp,
+        if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
                 RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
@@ -270,7 +270,7 @@ bool ruuvi_library_test_compress_decompress_2_times()
     return result;
 }
 
-bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_print_fp
+bool rl_test_compress_decompress_ratio (const rl_test_print_fp
         printfp)
 {
     bool result =  true;
@@ -280,15 +280,15 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     srand (1);
     ret_type_t lib_status = RL_COMPRESS_SUCCESS;
     timestamp_t start_timestamp = RL_COMPRESS_TEST_TIME_DEFAULT;
-    memset (&htab, 0, sizeof (htab));
+    memset (&m_compress_state, 0, sizeof (m_compress_state));
 
     // Compress as much as possible
     while ( (RL_COMPRESS_SUCCESS == lib_status))
     {
         // Try to append uncompressed data to block.
         // rl_compress returns RL_COMPRESS_SUCCESS if data was appended
-        lib_status = rl_compress (&test_data, htab.compress_block, RL_COMPRESS_COMPRESS_SIZE,
-                                  &htab);
+        lib_status = rl_compress (&test_data, m_compress_state.compress_block, RL_COMPRESS_COMPRESS_SIZE,
+                                  &m_compress_state);
 
         if (RL_COMPRESS_SUCCESS == lib_status)
         {
@@ -316,12 +316,12 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     if (true == result)
     {
         start_timestamp = RL_COMPRESS_TEST_FIND_TIME_LOWEST;
-        ratio = (float) htab.compressed_size / (float) counter;
+        ratio = (float) m_compress_state.compressed_size / (float) counter;
         char msg[128] = {0};
         snprintf (msg, sizeof (msg), "\"compress_ratio:\"\"%02.02f%%\",\r\n", ratio);
         printfp (msg);
 
-        if (false == ruuvi_library_test_decompress_all (htab.compress_block, &start_timestamp,
+        if (false == rl_test_decompress_all (m_compress_state.compress_block, &start_timestamp,
                 RL_COMPRESS_COMPRESS_SIZE))
         {
             result = false;
@@ -333,16 +333,16 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
     return result;
 }
 
-bool ruuvi_library_test_invalid_input()
+bool rl_test_invalid_input()
 {
     bool result = true;
 
-    if (false == ruuvi_library_test_null())
+    if (false == rl_test_null())
     {
         result = false;
     }
 
-    if (false == ruuvi_library_test_invalid_state())
+    if (false == rl_test_invalid_state())
     {
         result = false;
     }

@@ -2,37 +2,13 @@
  * Compression library implementation on nRF52832.
  *
  * License: BSD-3
- * Author: Oleg Protasevich
+ * Author: Oleg Protasevich, Otso Jousimaa
  */
 #include "ruuvi_library_compress.h"
 
 #define  LZF_NO_RESULT                      0
 
-
-/*
-typedef struct
-{
-    LZF_HSLOT algo_state; //!< Hashtable, memset to 0 to reset. 4 kB
-    uint8_t compress_block[RL_COMPRESS_COMPRESS_SIZE]; // Compressed block, 4 kB
-    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block, 8 kB
-    size_t compressed_size;   //!< Number of compressed bytes in compress block.
-    size_t decompressed_size; //!< Number of uncompressed bytes in decompress block.
-}rl_compress_state_t;
-*/
-
-/**
- * @brief Ruuvi Library compress function.
- * Takes a sensor data sample in and appends it to given data block.
- * It can be assumed that data is appended in linear order, new sample has always greater timestamp than previous.
- *
- * @param[in] data Sensor data to compress.
- * @param[in] block Pointer to buffer which has sensor data.
- * @param[in] block_size Size of block.
- * @param[in,out] state In: State of compression algorithm before adding latest data. Out: State of compression algorithm after adding latest data.
- * @return status code indicating if compression was successful.
- *
- */
-ret_type_t rl_compress (rl_data_t * const data,
+ret_type_t rl_compress (const rl_data_t * const data,
                         uint8_t * const block,
                         const size_t block_size,
                         rl_compress_state_t * const state)

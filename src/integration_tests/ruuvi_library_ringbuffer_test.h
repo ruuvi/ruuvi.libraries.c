@@ -22,28 +22,28 @@
  */
 
 /** Dummy function to lock/unlock buffer */
-bool ruuvi_library_test_ringbuffer_lock_dummy (volatile uint32_t * const flag, bool lock);
+bool rl_test_ringbuffer_lock_dummy (volatile uint32_t * const flag, bool lock);
 
 /**
  * Test that data can be queued and dequeued to/from buffer
  *
  * @return true if test passes
  */
-bool ruuvi_library_test_ringbuffer_put_get();
+bool rl_test_ringbuffer_put_get();
 
 /**
- * Test that buffer returns RUUVI_LIBRARY_ERROR_NO_MEM once full
+ * Test that buffer returns RL_ERROR_NO_MEM once full
  *
  * @return true if test passes
  */
-bool ruuvi_library_test_ringbuffer_overflow();
+bool rl_test_ringbuffer_overflow();
 
 /**
- * Test that buffer returns RUUVI_LIBRARY_ERROR_NO_DATA once empty
+ * Test that buffer returns RL_ERROR_NO_DATA once empty
  *
  * @return true if test passes
  */
-bool ruuvi_library_test_ringbuffer_underflow();
+bool rl_test_ringbuffer_underflow();
 
 /*@]*/
 

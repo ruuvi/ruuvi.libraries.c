@@ -4,7 +4,7 @@
 #include <float.h>
 #include <math.h>
 
-float ruuvi_library_variance (const float * const data, const size_t data_length)
+float rl_variance (const float * const data, const size_t data_length)
 {
     float rvalue = NAN;
 
