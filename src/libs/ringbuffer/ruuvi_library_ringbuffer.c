@@ -50,7 +50,10 @@ rl_status_t rl_ringbuffer_peek (rl_ringbuffer_t * const
 {
     if (NULL == buffer || NULL == data)         { return RL_ERROR_NULL; }
 
-    if ( ( (buffer->tail + index) & buffer->index_mask) == buffer->head) { return RL_ERROR_NO_DATA; }
+    if ( ( (buffer->tail + index) & buffer->index_mask) == buffer->head)
+    {
+        return RL_ERROR_NO_DATA;
+    }
 
     if (!buffer->lock (buffer->readlock, true))  {return RL_ERROR_CONCURRENCY; }
 

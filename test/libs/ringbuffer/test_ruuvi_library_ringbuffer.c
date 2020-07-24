@@ -231,3 +231,81 @@ void test_ruuvi_library_ringbuffer_peek_ok (void)
     TEST_ASSERT (*readback == data[2]);
     TEST_ASSERT (!rl_ringbuffer_empty (&ringbuf));
 }
+
+void test_ruuvi_library_ringbuffer_peek_null_all (void)
+{
+    rl_status_t lib_status = RL_SUCCESS;
+    lib_status |= rl_ringbuffer_peek (NULL,
+                                      NULL, 2);
+    TEST_ASSERT (RL_ERROR_NULL == lib_status);
+}
+
+void test_ruuvi_library_ringbuffer_peek_null_buf (void)
+{
+    uint8_t * readback = NULL;
+    rl_status_t lib_status = RL_SUCCESS;
+    lib_status |= rl_ringbuffer_peek (NULL,
+                                      &readback, 2);
+    TEST_ASSERT (RL_ERROR_NULL == lib_status);
+}
+
+void test_ruuvi_library_ringbuffer_peek_null_data (void)
+{
+    rl_status_t lib_status = RL_SUCCESS;
+    lib_status |= rl_ringbuffer_peek (&ringbuf,
+                                      NULL, 2);
+    TEST_ASSERT (RL_ERROR_NULL == lib_status);
+}
+
+void test_ruuvi_library_ringbuffer_dequeue_removes_elements (void)
+{
+    uint8_t data[100] = { 0 };
+    uint8_t * readback = NULL;
+    TEST_ASSERT (rl_ringbuffer_empty (&ringbuf));
+    rl_status_t lib_status = RL_SUCCESS;
+
+    for (size_t ii = 0; ii < sizeof (data); ii++)
+    {
+        data[ii] = ii;
+        rl_ringbuffer_queue (&ringbuf,
+                             &data[ii],
+                             1);
+
+        if (ii % 2)
+        {
+            lib_status |= rl_ringbuffer_dequeue (&ringbuf,
+                                                 &readback);
+        }
+    }
+
+    TEST_ASSERT (RL_SUCCESS == lib_status);
+
+    for (size_t ii = 0; ii < (sizeof (data) / 2); ii++)
+    {
+        lib_status |= rl_ringbuffer_peek (&ringbuf,
+                                          &readback, ii);
+        TEST_ASSERT (RL_SUCCESS == lib_status);
+        TEST_ASSERT (*readback == (ii + 50));
+    }
+}
+
+void test_ruuvi_library_ringbuffer_peek_no_data (void)
+{
+    uint8_t data[100] = { 0 };
+    uint8_t * readback = NULL;
+    TEST_ASSERT (rl_ringbuffer_empty (&ringbuf));
+    rl_status_t lib_status = RL_SUCCESS;
+
+    for (size_t ii = 0; ii < 50; ii++)
+    {
+        data[ii] = ii;
+        rl_ringbuffer_queue (&ringbuf,
+                             &data[ii],
+                             1);
+    }
+
+    TEST_ASSERT (RL_SUCCESS == lib_status);
+    lib_status |= rl_ringbuffer_peek (&ringbuf,
+                                      &readback, 50);
+    TEST_ASSERT (RL_ERROR_NO_DATA == lib_status);
+}
