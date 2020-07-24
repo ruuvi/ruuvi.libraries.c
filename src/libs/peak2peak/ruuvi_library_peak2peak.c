@@ -4,7 +4,7 @@
 #include <float.h>
 #include <math.h>
 
-float ruuvi_library_peak2peak (const float * const data, const size_t data_length)
+float rl_peak2peak (const float * const data, const size_t data_length)
 {
     if (NULL == data || 0 == data_length) { return NAN; }
 

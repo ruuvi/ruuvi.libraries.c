@@ -15,7 +15,7 @@
 #include <stdlib.h>
 /// @cond 0
 #ifndef NAN
-error "NAN is not defined"
+#   error "NAN is not defined"
 #endif
 /// @endcond
 
@@ -32,7 +32,7 @@ error "NAN is not defined"
  * @param data_length[in] Number of values
  * @return Difference between min and max, NAN if any of given values is NAN or input parameters are invalid
  */
-float ruuvi_library_peak2peak (const float * const data, const size_t data_length);
+float rl_peak2peak (const float * const data, const size_t data_length);
 
 /** @} */ // End of group analysis
 #endif

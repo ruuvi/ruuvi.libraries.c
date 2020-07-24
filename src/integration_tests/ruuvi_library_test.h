@@ -17,7 +17,7 @@
  *  Functions to test analysis functions for correctness.
  *  @{
  */
-typedef void (*ruuvi_library_test_print_fp) (const char * const msg);
+typedef void (*rl_test_print_fp) (const char * const msg);
 
 /**
  * @brief Initializes the tests.
@@ -27,7 +27,7 @@ typedef void (*ruuvi_library_test_print_fp) (const char * const msg);
  *                    a null terminated string as a parameter and returns void.
  * @return True if all tests passed, false otherwise
  */
-bool ruuvi_library_test_all_run (const ruuvi_library_test_print_fp printfp);
+bool rl_test_all_run (const rl_test_print_fp printfp);
 
 /**
  * @brief Check if given value is "near enough" to what user expects.
@@ -38,19 +38,19 @@ bool ruuvi_library_test_all_run (const ruuvi_library_test_print_fp printfp);
  * float expect = 0.12f;
  * float check  = 0.127f;
  * int8_t precision = 2;
- * ruuvi_library_expect_close(expect, precision, check); // true
+ * rl_expect_close(expect, precision, check); // true
  * expect = 120f;
  * check  = 127f;
  * precision = -1;
- * ruuvi_library_expect_close(expect, precision, check); // true
+ * rl_expect_close(expect, precision, check); // true
  *
  * @param expect[in] Expected value.
  * @param precision[in] Number of decimals which must match.
  * @param check[in] Value to check
  *
  */
-bool ruuvi_library_expect_close (const float expect, const int8_t precision,
-                                 const float check);
+bool rl_expect_close (const float expect, const int8_t precision,
+                      const float check);
 
 
 

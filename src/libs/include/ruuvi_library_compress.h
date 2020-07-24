@@ -16,7 +16,7 @@
 #include <stdbool.h>
 #include "liblzf-3.6/lzf.h"
 
-#define RL_COMPRESS_CONVERT_TO_INT
+// #define RL_COMPRESS_CONVERT_TO_INT Drops floating precision.
 
 #define RL_COMPRESS_SUCCESS                (0U)       ///< Success
 #define RL_COMPRESS_ERROR_INVALID_PARAM    (1U<<4U)   ///< Invalid Parameter
@@ -35,7 +35,7 @@
 /**
  * @brief Maximum compression ratio is COMPRESS_SIZE/DECOMPRESS_SIZE, but increases RAM usage.
  */
-#define RL_COMPRESS_DECOMPRESS_SIZE        (3U * RL_COMPRESS_COMPRESS_SIZE)
+#define RL_COMPRESS_DECOMPRESS_SIZE        (2U * RL_COMPRESS_COMPRESS_SIZE)
 #define RL_COMPRESS_FIELD_NUM              (3U) //!< Number of fields to compress
 /**
  * Compression overhead allows small percentage of wasted space in block.
@@ -58,8 +58,8 @@ typedef struct
 typedef struct
 {
     rl_compress_algo_state_t algo_state; //!< Hashtable, memset to 0 to reset. 4 kB
-    uint8_t compress_block[RL_COMPRESS_COMPRESS_SIZE]; // Compressed block, 4 kB
-    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block, 12 kB
+    uint8_t compress_block[RL_COMPRESS_COMPRESS_SIZE]; // Compressed block.
+    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block.
     size_t compressed_size;   //!< Number of compressed bytes in compress block.
     size_t decompressed_size; //!< Number of uncompressed bytes in decompress block.
     size_t next_decompression; //!< Counter for number of decompressed bytes before trying next decompression.
@@ -71,16 +71,27 @@ typedef struct
 /**
  * @brief Ruuvi Library compress function.
  * Takes a sensor data sample in and appends it to given data block.
- * It can be assumed that data is appended in linear order, new sample has always greater timestamp than previous.
  *
- * @param[in] data Sensor data to compress.
- * @param[in] block Pointer to buffer which has sensor data.
+ * It is assumed that data is appended in linear order,
+ * new sample has always greater timestamp than previous.
+ *
+ * @param[in] data Sensor data to compress, 1 sample.
+ * @param[out] block Pointer to buffer to which compressed data is placed.
  * @param[in] block_size Size of block.
- * @param[in,out] state In: State of compression algorithm before adding latest data. Out: State of compression algorithm after adding latest data.
- * @return status code indicating if compression was successful.
+ * @param[in,out] state In: State of compression algorithm before adding latest data.
+ *                      Out: State of compression algorithm after adding latest data.
+ * @retval RL_SUCCESS If compression was successful.
+ * @retval RL_ERROR_NULL If given a NULL as a parameter.
+ * @retval RL_COMPRESS_END If the block is considered full.
+ *                         Block is ready to be stored to non-volatile memory.
+ * @retval RL_COMPRESS_OUT2BIG If compressed data is larger than uncompressed data.
+ *                             In this case uncompressed data should be stored,
+ *                             compressed data may be invalid if it doesn't fit
+ *                             into block.
+ *
  *
  */
-ret_type_t rl_compress (rl_data_t * const data,
+ret_type_t rl_compress (const rl_data_t * const data,
                         uint8_t * const block,
                         const size_t block_size,
                         rl_compress_state_t * const state);
@@ -88,14 +99,8 @@ ret_type_t rl_compress (rl_data_t * const data,
  * @brief Ruuvi Library decompress function.
  * Looks up next sample after given timestamp and returns it via output parameter.
  *
- * @param[out] data Next sample from block. Not modified if no data was found in block.
- * @param[in]  block Pointer to compressed buffer with sensor data.
- * @param[in]  block_size Size of block.
- * @param[in,out] state In: State of decompression algorithm before decompressing next data point. Out: State of decompression algorithm after decompressing next data point.
- * @param[in,out] start_timestamp In: Earliest timestamp to accept. Out: Timestamp of returned data.
- * @return Status of decompression, such as more available or not_found.
- *
  * Usage:
+ * @code
  * ret_type_t status;
  * rl_data_t data;
  * uint8_t* block = get_next_block();
@@ -108,6 +113,15 @@ ret_type_t rl_compress (rl_data_t * const data,
  *   status = rl_decompress(&data, block, block_size, &state, &start_timestamp);
  *   do_something_with_data(&data);
  * }
+ * @endcode
+ *
+ * @param[out] data Next sample from block. Not modified if no data was found in block.
+ * @param[in]  block Pointer to compressed buffer with sensor data.
+ * @param[in]  block_size Size of block.
+ * @param[in,out] state In: State of decompression algorithm before decompressing next data point. Out: State of decompression algorithm after decompressing next data point.
+ * @param[in,out] start_timestamp In: Earliest timestamp to accept. Out: Timestamp of returned data.
+ * @retval Status of decompression, such as more available or not_found.
+ *
  *
  *
  */

@@ -30,7 +30,7 @@ error "NAN is not defined"
  * @param data_length[in] Number of values
  * @return RMS of values, NAN if any of given values is NAN or input parameters are invalid
  */
-float ruuvi_library_rms (const float * const data, const size_t data_length);
+float rl_rms (const float * const data, const size_t data_length);
 
 /** @} */ // End of group analysis
 #endif

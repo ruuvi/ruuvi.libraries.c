@@ -22,7 +22,7 @@
  *
  * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_compress_decompress (void);
+bool rl_test_compress_decompress (void);
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
@@ -30,7 +30,7 @@ bool ruuvi_library_test_compress_decompress (void);
  *
  * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_compress_decompress_2_times (void);
+bool rl_test_compress_decompress_2_times (void);
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
@@ -38,8 +38,8 @@ bool ruuvi_library_test_compress_decompress_2_times (void);
  *
  * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_print_fp
-        printfp);
+bool rl_test_compress_decompress_ratio (const rl_test_print_fp
+                                        printfp);
 
 /**
  * @brief Ruuvi Library test compress/decompress function.
@@ -47,6 +47,6 @@ bool ruuvi_library_test_compress_decompress_ratio (const ruuvi_library_test_prin
  *
  * @return true if test is valid, false if else.
  */
-bool ruuvi_library_test_invalid_input (void);
+bool rl_test_invalid_input (void);
 
 #endif
