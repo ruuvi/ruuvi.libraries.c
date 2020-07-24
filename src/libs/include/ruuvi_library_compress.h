@@ -58,8 +58,8 @@ typedef struct
 typedef struct
 {
     rl_compress_algo_state_t algo_state; //!< Hashtable, memset to 0 to reset. 4 kB
-    uint8_t compress_block[RL_COMPRESS_COMPRESS_SIZE]; // Compressed block, 4 kB
-    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block, 12 kB
+    uint8_t compress_block[RL_COMPRESS_COMPRESS_SIZE]; // Compressed block.
+    uint8_t decompress_block[RL_COMPRESS_DECOMPRESS_SIZE]; // Decompressed block.
     size_t compressed_size;   //!< Number of compressed bytes in compress block.
     size_t decompressed_size; //!< Number of uncompressed bytes in decompress block.
     size_t next_decompression; //!< Counter for number of decompressed bytes before trying next decompression.
