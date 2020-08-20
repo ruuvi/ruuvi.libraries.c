@@ -192,8 +192,10 @@ bool rl_test_all_run (const rl_test_print_fp printfp)
     printfp (",\r\n");
     rl_test_ringbuffer (&total_tests, &passed, printfp);
     printfp (",\r\n");
+#if RL_LIBLZF_ENABLED
     rl_test_compress (&total_tests, &passed, printfp);
     printfp (",\r\n");
+#endif
     char msg[128] = {0};
     snprintf (msg, sizeof (msg), "\"total_tests\":\"%lu\",\r\n\"passed_tests\":\"%lu\"\r\n",
               total_tests, passed);

@@ -34,4 +34,8 @@
 #   define RL_INTEGRATION_TEST_ENABLED ENABLE_DEFAULT
 #endif
 
+#ifndef RL_LIBLZF_ENABLED
+#   define RL_LIBLZF_ENABLED 0
+#endif
+
 #endif

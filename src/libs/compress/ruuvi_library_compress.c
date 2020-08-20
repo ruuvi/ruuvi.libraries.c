@@ -5,6 +5,7 @@
  * Author: Oleg Protasevich, Otso Jousimaa
  */
 #include "ruuvi_library_compress.h"
+#if RL_LIBLZF_ENABLED
 
 #define  LZF_NO_RESULT                      0
 
@@ -192,3 +193,4 @@ ret_type_t rl_decompress (rl_data_t * data,
 
     return err_code;
 }
+#endif
