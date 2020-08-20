@@ -146,6 +146,7 @@ static void rl_test_ringbuffer (uint32_t * const total_tests,
     printfp ("}");
 }
 
+#if RL_LIBLZF_ENABLED || DOXYGEN
 /**
  * @brief Run compress tests
  *
@@ -179,6 +180,7 @@ static void rl_test_compress (uint32_t * const total_tests,
     pass ? printfp ("\"pass\"\r\n") : printfp ("\"fail\"\r\n");
     printfp ("}");
 }
+#endif
 
 bool rl_test_all_run (const rl_test_print_fp printfp)
 {
