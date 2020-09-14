@@ -289,6 +289,43 @@ void test_ruuvi_library_ringbuffer_dequeue_removes_elements (void)
     }
 }
 
+void test_ruuvi_library_ringbuffer_dequeue_null (void)
+{
+    uint8_t * readback = NULL;
+    TEST_ASSERT (rl_ringbuffer_empty (&ringbuf));
+    rl_status_t lib_status = RL_SUCCESS;
+    lib_status = rl_ringbuffer_dequeue (NULL, &readback);
+    TEST_ASSERT (RL_ERROR_NULL == lib_status);
+    lib_status = rl_ringbuffer_dequeue (&ringbuf, NULL);
+    TEST_ASSERT (RL_ERROR_NULL == lib_status);
+}
+
+void test_ruuvi_library_ringbuffer_dequeue_empty (void)
+{
+    uint8_t * readback = NULL;
+    TEST_ASSERT (rl_ringbuffer_empty (&ringbuf));
+    rl_status_t lib_status = RL_SUCCESS;
+    lib_status = rl_ringbuffer_dequeue (&ringbuf, &readback);
+    TEST_ASSERT (RL_ERROR_NO_DATA == lib_status);
+}
+
+void test_ruuvi_library_ringbuffer_dequeue_concurrency (void)
+{
+    uint8_t data[100] = { 0 };
+    uint8_t * readback = NULL;
+    TEST_ASSERT (rl_ringbuffer_empty (&ringbuf));
+    data[0] = 1;
+    rl_ringbuffer_queue (&ringbuf,
+                         &data[0],
+                         1);
+    buffer_rlock = true;
+    rl_status_t lib_status = rl_ringbuffer_dequeue (&ringbuf,
+                             &data);
+    TEST_ASSERT (RL_ERROR_CONCURRENCY == lib_status);
+}
+
+
+
 void test_ruuvi_library_ringbuffer_peek_no_data (void)
 {
     uint8_t data[100] = { 0 };
