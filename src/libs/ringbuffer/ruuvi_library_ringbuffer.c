@@ -3,8 +3,7 @@
 #include <string.h>
 
 
-rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const
-                                 buffer,
+rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const buffer,
                                  const void * const data,
                                  const size_t data_length)
 {
@@ -25,9 +24,8 @@ rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const
     return RL_SUCCESS;
 }
 
-rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t *
-                                   const buffer,
-                                   const void * data)
+rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t * const buffer,
+                                   void * const data)
 {
     if (NULL == buffer || NULL == data)         { return RL_ERROR_NULL; }
 

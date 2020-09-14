@@ -118,7 +118,7 @@ rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const buffer,
  * @warning       Data returned by this function can be overwritten, take a deep copy if required.
  */
 rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t * const buffer,
-                                   const void * data);
+                                   void * const data);
 
 /**
  * @brief Peek data in ringbuffer
