@@ -27,19 +27,33 @@ rl_status_t rl_ringbuffer_queue (rl_ringbuffer_t * const buffer,
 rl_status_t rl_ringbuffer_dequeue (rl_ringbuffer_t * const buffer,
                                    void * const data)
 {
-    if (NULL == buffer || NULL == data)         { return RL_ERROR_NULL; }
+    rl_status_t err_code = RL_SUCCESS;
 
-    if (rl_ringbuffer_empty (buffer)) { return RL_ERROR_NO_DATA; }
+    if (NULL == buffer || NULL == data)
+    {
+        err_code |= RL_ERROR_NULL;
+    }
+    else if (rl_ringbuffer_empty (buffer))
+    {
+        err_code |= RL_ERROR_NO_DATA;
+    }
+    else if (!buffer->lock (buffer->readlock, true))
+    {
+        err_code |= RL_ERROR_CONCURRENCY;
+    }
+    else
+    {
+        void ** p_data = (void **) data;
+        *p_data = buffer->storage + (buffer->tail * buffer->block_size);
+        buffer->tail = ( (buffer->tail + 1) & buffer->index_mask);
 
-    if (!buffer->lock (buffer->readlock, true))  { return RL_ERROR_CONCURRENCY; }
+        if (!buffer->lock (buffer->readlock, false))
+        {
+            err_code |= RL_ERROR_FATAL;
+        }
+    }
 
-    void ** p_data = (void **) data;
-    *p_data = buffer->storage + (buffer->tail * buffer->block_size);
-    buffer->tail = ( (buffer->tail + 1) & buffer->index_mask);
-
-    if (!buffer->lock (buffer->readlock, false)) {return RL_ERROR_FATAL; }
-
-    return RL_SUCCESS;
+    return err_code;
 }
 
 rl_status_t rl_ringbuffer_peek (rl_ringbuffer_t * const
