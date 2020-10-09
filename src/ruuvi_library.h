@@ -12,10 +12,11 @@
  */
 #include <stdint.h>
 
-#define RUUVI_LIBRARIES_SEMVER "0.3.2"
+
+#define RUUVI_LIBRARIES_SEMVER "3.0.0"
 
 #define RL_SUCCESS           (0U)        //!< Success
-#define RL_ERROR_INTERNAL    (1U << 0U)  //!< Unknown error, some failed assumption. 
+#define RL_ERROR_INTERNAL    (1U << 0U)  //!< Unknown error, some failed assumption.
 #define RL_ERROR_NO_MEM      (1U << 1U)  //!< Not enough memory for operation
 #define RL_ERROR_CONCURRENCY (1U << 2U)  //!< Failed to acquire mutex
 #define RL_ERROR_NULL        (1U << 3U)  //!< Unexpected NULL pointer
