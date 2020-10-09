@@ -29,6 +29,9 @@ Styling is done via Artisitic Style, following configuration at .astylerc.
  * Unless otherwise stated, code is BSD-3, please see [LICENSE](./LICENSE) for details.
 
 # Changelog
+## 3.0.0
+ Publish as stable
+
 ## 0.2.0
  - Add liblzf compression
 
